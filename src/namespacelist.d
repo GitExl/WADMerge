@@ -44,6 +44,10 @@ class NamespaceList {
     private Namespace[string] mNamespaces;
 
 
+    this() {
+        this.mLoose.lumps = new OrderedAA!(string,Lump);
+    }
+
     public void addFrom(WAD wad) {
         Namespace* namespace;
         string name;
