@@ -29,28 +29,67 @@ import std.algorithm;
 
 
 class OrderedAA(K, I) {
+
+    // The items in this array, in the order that they were added.
     private I[] mItems;
+
+    // Keys pointing to item array indices for presence tests and fast lookups.
     private int[K] mKeys;
 
 
-    public void add(K key, I item) {
+    /**
+     * Adds a new item to this array.
+     * This function will always add a new item, and will not update any old one by
+     * the same key if present.
+     *
+     * @param key
+     * They key to add.
+     *
+     * @param item
+     * They item to add.
+     *
+     * @returns
+     * The index of the item that was added.
+     */
+    public int add(K key, I item) {
         this.mItems ~= item;
         this.mKeys[key] = this.mItems.length - 1;
+
+        return this.mItems.length - 1;
     }
 
-    public void update(K key, I item) {
+    /**
+     * Updates an item in this array.
+     * This function will replace an already existing item if present, otherwise it
+     * will add it to the end of the array.
+     *
+     * @param key
+     * They key to update.
+     *
+     * @param item
+     * They item to update.
+     *
+     * @returns
+     * The index of the item that was added.
+     */
+    public int update(K key, I item) {
         if (key in this.mKeys) {
             this.mItems[this.mKeys[key]] = item;
-        } else {
-            this.mItems ~= item;
-            this.mKeys[key] = this.mItems.length - 1;
+            return this.mKeys[key];
         }
+
+        return this.add(key, item);
     }
 
+    /**
+     * Sorts the items in this array by their key.
+     */
     public void sort() {
+        // Create a flat list of the keys present in this array and sort them.
         K[] keyList = this.mKeys.keys.dup;
         keyList.sort();
 
+        // Rebuild the item array in the order of the key list.
         I[] newItems;
         foreach (int index, K key; keyList) {
             newItems ~= this.mItems[this.mKeys[key]];
@@ -59,16 +98,49 @@ class OrderedAA(K, I) {
         this.mItems = newItems;
     }
 
-    public I opIndex(int index) {
-        return this.mItems[index];
-    }
-
-    public I opIndex(K key) {
-        return this.mItems[this.mKeys[key]];
-    }
-
+    /**
+     * Returns true if an item with the specified key is present in this array.
+     */
     public bool contains(K key) {
         return ((key in this.mKeys) !is null);
+    }
+
+    /**
+     * Returns an item from this array, or a default value if the item does not exist.
+     *
+     * @param key
+     * They key of the item to return.
+     *
+     * @param def
+     * They default value to return if the key is not present in this array.
+     *
+     * @returns
+     * The item with the specified key.
+     */
+    public I get(K key, I def) {
+        if (key in this.mKeys) {
+            return this.mItems[this.mKeys[key]];
+        } else {
+            return def;
+        }
+    }
+
+    /**
+     * Empties the contents of this array.
+     */
+    public void clear() {
+        this.mItems.length = 0;
+
+        foreach (K key; this.mKeys.keys) {
+            this.mKeys.remove(key);
+        }
+    }
+
+    /**
+     * Describes the number of items in this array.
+     */
+    @property int length() {
+        return this.mItems.length;
     }
 
     public int opApply(int delegate(ref I) dg) {
@@ -97,31 +169,11 @@ class OrderedAA(K, I) {
         return result;
     }
 
-    public I get(K key, I def) {
-        if (key in this.mKeys) {
-            return this.mItems[this.mKeys[key]];
-        } else {
-            return def;
-        }
+    public I opIndex(int index) {
+        return this.mItems[index];
     }
 
-    public int indexOf(K key) {
-        if (key in this.mKeys) {
-            return this.mKeys[key];
-        } else {
-            return -1;
-        }
-    }
-
-    public void clear() {
-        this.mItems.length = 0;
-
-        foreach (K key; this.mKeys.keys) {
-            this.mKeys.remove(key);
-        }
-    }
-
-    @property int length() {
-        return this.mItems.length;
+    public I opIndex(K key) {
+        return this.mItems[this.mKeys[key]];
     }
 }

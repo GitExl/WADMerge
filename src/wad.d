@@ -214,12 +214,7 @@ public class WAD {
     }
 
     public Lump getLump(string name) {
-        int index = this.mLumps.indexOf(name);
-        if (index == -1) {
-            return null;
-        }
-
-        return this.mLumps[index];
+        return this.mLumps.get(name, null);
     }
 
     public bool containsLump(string name) {
@@ -229,11 +224,7 @@ public class WAD {
     public OrderedAA!(string,Lump) getLumps() {
         return this.mLumps;
     }
-
-    public int getIndex(string name) {
-        return this.mLumps.indexOf(name);
-    }
-
+    
     public Lump addLump(Lump other) {
         Lump newLump = other;
 

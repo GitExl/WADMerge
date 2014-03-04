@@ -193,14 +193,11 @@ public class TextureList {
 
     public void mergeWith(TextureList otherList) {
         OrderedAA!(string,Texture) otherTextures = otherList.getTextures();
-        uint index;
 
         foreach (ref Texture otherTexture; otherTextures) {
             if (this.mTextures.contains(otherTexture.name)) {
-                index = this.mTextures.indexOf(otherTexture.name);
-
                 // Overwrite
-                if (texturesAreEqual(otherTexture, this.mTextures[index]) != true) {
+                if (texturesAreEqual(otherTexture, this.mTextures[otherTexture.name]) != true) {
                     console.writeLine(Color.IMPORTANT, "Overwriting texture %s", otherTexture.name);
                     this.mTextures.update(otherTexture.name, otherTexture);
                 }
