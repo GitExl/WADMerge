@@ -35,6 +35,7 @@ import console;
 import orderedaa;
 
 
+// A patch that is part of a texture definition.
 public struct TexturePatch {
     short offsetX;
     short offsetY;
@@ -42,6 +43,7 @@ public struct TexturePatch {
     string patchName;
 }
 
+// A texture definition.
 public struct Texture {
     ushort width;
     ushort height;
@@ -51,8 +53,15 @@ public struct Texture {
 
 
 public class TextureList {
+
+    // A list of texture definitions.
     private OrderedAA!(string,Texture) mTextures;
+
+    // Patch names, by index.
     private string[] mPatchNames;
+
+    // If true, the textures that were last read from a WAD file were
+    // in Strife 1.1 format.
     private bool mStrifeMode;
 
 
@@ -67,9 +76,16 @@ public class TextureList {
 
     this(MemoryStream data) {
         this();
-        this.addFrom(data);
+        this.readTextures(data);
     }
 
+    /**
+     * Adds textures and patch names from a WAD file.
+     * This will read the WAD's PNAMES and TEXTURE* lumps.
+     *
+     * @param wad
+     * The WAD file to read the texture information from.
+     */
     public void addFrom(WAD wad) {
         if (wad.containsLump("PNAMES") == false) {
             return;
@@ -78,30 +94,147 @@ public class TextureList {
             return;
         }
 
+        // Read patch names.
         Lump patches = wad.getLump("PNAMES");
         readPatchNames(patches.getStream());
         patches.setIsUsed(true);
 
+        // Read texture lumps. If TEXTURE2 is present, add the textures from that lump as well.
         Lump texture1 = wad.getLump("TEXTURE1");
-        this.addFrom(texture1.getStream());
+        this.readTextures(texture1.getStream());
         texture1.setIsUsed(true);
-
         if (wad.containsLump("TEXTURE2") == true) {
             Lump texture2 = wad.getLump("TEXTURE2");
-            this.addFrom(texture2.getStream());
+            this.readTextures(texture2.getStream());
             texture2.setIsUsed(true);
         }
     }
 
-    public void addFrom(MemoryStream data) {
+    /**
+     * Writes a PNAMES and TEXTURE1 lump containing this list's textures to a WAD file.
+     *
+     * @param wad
+     * The WAD file to write the textures and patch names to.
+     */
+    public void writeTo(WAD wad) {
+        // Create the data for a TEXTURES lump.
+        MemoryStream textures = new MemoryStream();
+        textures.write(cast(uint)this.mTextures.length);
+
+        // Write offsets to the texture definitions in this data.
+        uint offset = 4 + this.mTextures.length * 4;
+        foreach (Texture texture; this.mTextures) {
+            textures.write(offset);
+
+            // The size of a normal texture definition is 22 bytes, 18 for Strife textures.
+            // Each patch definition is 10 bytes or 6 for Strife patches.
+            if (this.mStrifeMode == true) {
+                offset += 18 + texture.patches.length * 6;
+            } else {
+                offset += 22 + texture.patches.length * 10;
+            }
+        }
+
+        // Write texture definitions.
+        foreach (Texture texture; this.mTextures) {
+            textures.write(cast(ubyte[])leftJustify(texture.name, 8, '\0'));
+            textures.write(cast(uint)0);
+            textures.write(texture.width);
+            textures.write(texture.height);
+
+            if (this.mStrifeMode == false) {
+                textures.write(cast(uint)0);
+            }
+
+            textures.write(cast(ushort)texture.patches.length);
+
+            // Write the patch definitions for the current texture.
+            foreach (TexturePatch patch; texture.patches) {
+                textures.write(patch.offsetX);
+                textures.write(patch.offsetY);
+                textures.write(patch.patchIndex);
+
+                if (this.mStrifeMode == false) {
+                    textures.write(cast(uint)0);
+                }
+            }
+        }
+
+        // Create the data for a PNAMES lump.
+        MemoryStream pnames = new MemoryStream();
+        pnames.write(cast(uint)this.mPatchNames.length);
+        foreach (string patchName; this.mPatchNames) {
+            pnames.write(cast(ubyte[])leftJustify(patchName, 8, '\0'));
+        }
+
+        // Add the new lumps to the WAD file.
+        wad.addLump(new Lump("TEXTURE1", textures.data()));
+        wad.addLump(new Lump("PNAMES", pnames.data()));
+    }
+
+    /**
+     * Merges the textures in this list with the textures from another list.
+     * Texture names that already exist are overwritten if the other texture definition differs.
+     *
+     * @param otherList
+     * The other TextureList object to merge with this one.
+     */
+    public void mergeWith(TextureList otherList) {
+        foreach (ref Texture otherTexture; otherList.getTextures()) {
+            
+            // Overwrite the existing texture if the other texture differs.
+            if (this.mTextures.contains(otherTexture.name)) {
+                if (texturesAreEqual(otherTexture, this.mTextures[otherTexture.name]) != true) {
+                    console.writeLine(Color.IMPORTANT, "Overwriting texture %s", otherTexture.name);
+                    this.mTextures.update(otherTexture.name, otherTexture);
+                }
+
+            // If the texture name is new, just add it.
+            } else {
+                this.mTextures.add(otherTexture.name, otherTexture);
+            }
+        }
+    }
+
+    /**
+     * Updates the patch names array and texture patch indices.
+     * This should normally be called after modifications have been made to the textures or patches,
+     * so that a valid TEXTURE lump can be written from this texture list.
+     */
+    public void updatePatchNames() {
+        uint[string] patchIndices;
+
+        this.mPatchNames.length = 0;
+        foreach (ref Texture texture; this.mTextures) {
+            foreach (ref TexturePatch patch; texture.patches) {
+                // Add patch indices for newly encountered patch names.
+                if (!(patch.patchName in patchIndices)) {
+                    this.mPatchNames ~= patch.patchName;
+                    patchIndices[patch.patchName] = this.mPatchNames.length - 1;
+                }
+
+                // Set the patch index from the indices list.
+                patch.patchIndex = cast(ushort)patchIndices[patch.patchName];
+            }
+        }
+    }
+
+    /**
+     * Sorts the textures in this list by name. Patch names are unaffected.
+     */
+    public void sort() {
+        this.mTextures.sort();
+    }
+
+    private void readTextures(MemoryStream data) {
         uint textureCount;
         uint[] textureOffsets;
 
         data.seek(0, SeekPos.Set);
 
+        // Allocate room for the amount of textures in the texture lump.
         data.read(textureCount);
         textureOffsets = new uint[textureCount];
-
         for (int index; index < textureCount; index++) {
             data.read(textureOffsets[index]);
         }
@@ -113,14 +246,13 @@ public class TextureList {
 
             Texture texture;
             texture.name = readPaddedString(data, 8);
-
             data.read(unused);
             data.read(unused);
             data.read(texture.width);
             data.read(texture.height);
             data.read(unused);
 
-            // Detect Strife 1.1 format.
+            // Strife 1.1 texture lumps do not store some unused bytes.
             if (unused != 0) {
                 patchCount = cast(ushort)unused;
                 this.mStrifeMode = true;
@@ -149,83 +281,6 @@ public class TextureList {
         }
     }
 
-    public void writeTo(WAD wad) {
-        MemoryStream textures = new MemoryStream();
-        textures.write(cast(uint)this.mTextures.length);
-        uint offset = 4 + this.mTextures.length * 4;
-        foreach (Texture texture; this.mTextures) {
-            textures.write(offset);
-
-            if (this.mStrifeMode == true) {
-                offset += 18 + texture.patches.length * 6;
-            } else {
-                offset += 22 + texture.patches.length * 10;
-            }
-        }
-        foreach (Texture texture; this.mTextures) {
-            textures.write(cast(ubyte[])leftJustify(texture.name, 8, '\0'));
-            textures.write(cast(uint)0);
-            textures.write(texture.width);
-            textures.write(texture.height);
-            if (this.mStrifeMode == false) {
-                textures.write(cast(uint)0);
-            }
-            textures.write(cast(ushort)texture.patches.length);
-
-            foreach (TexturePatch patch; texture.patches) {
-                textures.write(patch.offsetX);
-                textures.write(patch.offsetY);
-                textures.write(patch.patchIndex);
-                if (this.mStrifeMode == false) {
-                    textures.write(cast(uint)0);
-                }
-            }
-        }
-        wad.addLump(new Lump("TEXTURE1", textures.data()));
-
-        MemoryStream pnames = new MemoryStream();
-        pnames.write(cast(uint)this.mPatchNames.length);
-        foreach (string patchName; this.mPatchNames) {
-            pnames.write(cast(ubyte[])leftJustify(patchName, 8, '\0'));
-        }
-        wad.addLump(new Lump("PNAMES", pnames.data()));
-    }
-
-    public void mergeWith(TextureList otherList) {
-        OrderedAA!(string,Texture) otherTextures = otherList.getTextures();
-
-        foreach (ref Texture otherTexture; otherTextures) {
-            if (this.mTextures.contains(otherTexture.name)) {
-                // Overwrite
-                if (texturesAreEqual(otherTexture, this.mTextures[otherTexture.name]) != true) {
-                    console.writeLine(Color.IMPORTANT, "Overwriting texture %s", otherTexture.name);
-                    this.mTextures.update(otherTexture.name, otherTexture);
-                }
-
-            // Add
-            } else {
-                this.mTextures.add(otherTexture.name, otherTexture);
-            }
-        }
-    }
-
-    public void updatePatchNames() {
-        uint[string] patchIndices;
-
-        this.mPatchNames.length = 0;
-
-        foreach (ref Texture texture; this.mTextures) {
-            foreach (ref TexturePatch patch; texture.patches) {
-                if (!(patch.patchName in patchIndices)) {
-                    this.mPatchNames ~= patch.patchName;
-                    patchIndices[patch.patchName] = this.mPatchNames.length - 1;
-                }
-
-                patch.patchIndex = cast(ushort)patchIndices[patch.patchName];
-            }
-        }
-    }
-
     private void readPatchNames(MemoryStream data) {
         uint count;
         data.read(count);
@@ -251,18 +306,10 @@ public class TextureList {
         return true;
     }
 
-    public void sort() {
-        this.mTextures.sort();
-    }
-
     public OrderedAA!(string,Texture) getTextures() {
         return this.mTextures;
     }
-
-    public bool containsTexture(string name) {
-        return this.mTextures.contains(name);
-    }
-
+    
     public void setStrifeMode(bool strifeMode) {
         this.mStrifeMode = strifeMode;
     }
