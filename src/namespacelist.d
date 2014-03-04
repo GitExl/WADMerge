@@ -145,7 +145,15 @@ class NamespaceList {
             foreach (Lump lump; namespace.lumps) {
                 wad.addLump(lump);
             }
-            wad.addLump(format("%s_END", namespace.name));
+
+            // Write short style end markers for better vanilla compatibility.
+            if (namespace.name == "SS") {
+                wad.addLump("S_END");
+            } else if (namespace.name == "FF") {
+                wad.addLump("F_END");
+            } else {
+                wad.addLump(format("%s_END", namespace.name));
+            }
         }
     }
 
