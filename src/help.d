@@ -38,7 +38,7 @@ Output
 -w, --overwrite    Overwrite the output file without asking for confirmation.
 
 Sorting
--n, --sort-ns=true         Sort namespaced lumps alphabetically.
--m, --sort-maps=true       Sort maps alphabetically.
--l, --sort-loose=false     Sort loose lumps alphabetically.
--t, --sort-textures=false  Sort textures alphabetically.";
+--sort-ns=true         Sort namespaced lumps alphabetically.
+--sort-maps=true       Sort maps alphabetically.
+--sort-loose=false     Sort loose lumps alphabetically.
+--sort-textures=false  Sort textures alphabetically.";

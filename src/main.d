@@ -65,14 +65,14 @@ int main(string[] argv) {
     // Parse command line parameters.
     try {
         getopt(argv,
-            "license|l",       &writeLicense,
-            "help|h|?",        &writeHelp,
-            "output|o",        &outputFile,
-            "overwrite|w",     &overwrite,
-            "sort-ns|n",       &sortNamespaces,
-            "sort-maps|m",     &sortMaps,
-            "sort-loose|l",    &sortLoose,
-            "sort-textures|t", &sortTextures
+            "license|l",     &writeLicense,
+            "help|h|?",      &writeHelp,
+            "output|o",      &outputFile,
+            "overwrite|w",   &overwrite,
+            "sort-ns",       &sortNamespaces,
+            "sort-maps",     &sortMaps,
+            "sort-loose",    &sortLoose,
+            "sort-textures", &sortTextures
         );
     } catch (Exception e) {
         stderr.writeln(e.msg);
