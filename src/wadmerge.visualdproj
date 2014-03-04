@@ -189,7 +189,7 @@
   <filesToClean>*.obj;*.cmd;*.build;*.json;*.dep</filesToClean>
  </Config>
  <Folder name="wadmerge">
-  <File path="console.d" />
+  <File path="console_win.d" />
   <File path="help.d" />
   <File path="license.d" />
   <File path="main.d" />
