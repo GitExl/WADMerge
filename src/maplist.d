@@ -59,6 +59,8 @@ struct MapMarker {
 
 
 class MapList {
+
+    // The map markers in this list of maps.
     OrderedAA!(string,MapMarker) mMapMarkers;
 
 
@@ -66,21 +68,29 @@ class MapList {
         this.mMapMarkers = new OrderedAA!(string,MapMarker);
     }
 
+    /**
+     * Adds map markers from a WAD file.
+     *
+     * @param wad
+     * The WAD file to add map markers from.
+     */
     public void addFrom(WAD wad) {
-        MapMarker marker;
+        MapMarker* marker;
         string lumpName;
 
-        bool insideMap = false;
         OrderedAA!(string,Lump) lumps = wad.getLumps();
         foreach (int index, ref Lump lump; lumps) {
             lumpName = lump.getName();
 
-            if (insideMap == false) {
+            if (marker is null) {
+                // Detect the start of a new map.
                 if (lumpName == "THINGS" || lumpName == "TEXTMAP") {
+                    marker = new MapMarker();
                     marker.name = lumps[index - 1].getName();
                     marker.lumpIndexStart = index;
                     marker.wad = wad;
 
+                    // Detect map type.
                     if (lumpName == "TEXTMAP") {
                         marker.type = MapType.UDMF;
                     } else {
@@ -89,35 +99,38 @@ class MapList {
 
                     lumps[index - 1].setIsUsed(true);
                     lump.setIsUsed(true);
-
-                    insideMap = true;
                 }
 
             } else {
+                // UDMF maps end with a ENDMAP marker.
                 if (marker.type == MapType.UDMF) {
                     if (lumpName == "ENDMAP") {
                         marker.lumpIndexEnd = index + 1;
                         addMarker(marker);
-                        insideMap = false;
+                        marker = null;
                     }
                     lump.setIsUsed(true);
 
                 } else {
+                    // Hexen type maps have a BEHAVIOR lump.
                     if (lumpName == "BEHAVIOR") {
                         marker.type = MapType.HEXEN;
                     }
 
+                    // End this map if it is a not a known map lump.
                     if (isMapLump(lumpName) == false) {
                         marker.lumpIndexEnd = index;
                         addMarker(marker);
-                        insideMap = false;
+                        marker = null;
 
+                    // End this map if this lump is the last in the WAD.
                     } else if (index == lumps.length - 1) {
                         marker.lumpIndexEnd = index + 1;
                         addMarker(marker);
-                        insideMap = false;
+                        marker = null;
                         lump.setIsUsed(true);
 
+                    // This lump is part of the current map.
                     } else {
                         lump.setIsUsed(true);
                     }
@@ -126,6 +139,12 @@ class MapList {
         }
     }
 
+    /**
+     * Adds the maps in this list and their lumps to a WAD file.
+     *
+     * @param wad
+     * The WAD file to add the lumps to.
+     */
     public void addTo(WAD wad) {
         OrderedAA!(string,Lump) lumpList;
 
@@ -138,12 +157,19 @@ class MapList {
         }
     }
 
-    private void addMarker(MapMarker marker) {
+    /**
+     * Sorts this list's map markers by name.
+     */
+    public void sort() {
+        this.mMapMarkers.sort();
+    }
+
+    private void addMarker(MapMarker* marker) {
         if (this.mMapMarkers.contains(marker.name)) {
             console.writeLine(Color.IMPORTANT, "Overwriting map %s.", marker.name);
         }
 
-        this.mMapMarkers.update(marker.name, marker);
+        this.mMapMarkers.update(marker.name, *marker);
     }
 
     private bool isMapLump(string lumpName) {
@@ -155,9 +181,5 @@ class MapList {
         }
 
         return false;
-    }
-
-    public void sort() {
-        this.mMapMarkers.sort();
     }
 }
