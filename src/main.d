@@ -107,9 +107,10 @@ int main(string[] argv) {
         WAD wad = new WAD(wadPath);
         wadList ~= wad;
 
-        // Merge in different types of lumps.
+        // Merge in textures.
         TextureList wadTextures = new TextureList(wad);
-        if (wadTextures.getStrifeMode() == true) {
+        if (wadTextures.getStrifeMode() == true && textures.getStrifeMode() == false) {
+            textures.setStrifeMode(true);
             console.writeLine(Color.INFO, "Merging textures in Strife mode.");
         }
 
