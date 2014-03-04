@@ -33,21 +33,34 @@ import console;
 import orderedaa;
 
 
+// A namespace groups lumps by their type.
 struct Namespace {
+    // The name of this namespace. SS, FF, PP, etc.
     string name;
+
+    // The list of lumps contained in this namespace.
     OrderedAA!(string,Lump) lumps;
 }
 
 
 class NamespaceList {
-    private Namespace mLoose;
+    // The namespaces in this namespace list.
     private Namespace[string] mNamespaces;
+
+    // Loose lump namespace.
+    private Namespace mLoose;
 
 
     this() {
         this.mLoose.lumps = new OrderedAA!(string,Lump);
     }
 
+    /**
+     * Adds namespaces and their lumps from a WAD's contents.
+     *
+     * @param wad
+     * The WAD file to add namespaces from.
+     */
     public void addFrom(WAD wad) {
         Namespace* namespace;
         string name;
@@ -55,17 +68,17 @@ class NamespaceList {
         uint lumpSize;
         int nameIndex;
 
-        OrderedAA!(string,Lump) lumps = wad.getLumps();
-        foreach (Lump lump; lumps) {
+        foreach (Lump lump; wad.getLumps()) {
             lumpName = lump.getName();
             lumpSize = lump.getSize();
 
+            // Namespaces start with a 0 size lump that ends in _START.
             if (namespace is null && lumpSize == 0) {
                 nameIndex = indexOf(lumpName, "_START");
                 if (nameIndex > 0) {
                     name = lumpName[0..nameIndex];
 
-                    // Turn IWAD namespaces into patch wad namespaces.
+                    // Turn known IWAD namespaces into patch wad namespaces.
                     // Also takes care of the edge case where the starting marker's name does not match the ending marker's name.
                     if (name == "F" || name == "F1" || name == "F2" || name == "F3") {
                         name = "FF";
@@ -75,6 +88,7 @@ class NamespaceList {
                         name = "PP";
                     }
 
+                    // Either reuse an existing namespace or create a new one.
                     if (name in this.mNamespaces) {
                         namespace = &this.mNamespaces[name];
                     } else {
@@ -89,6 +103,7 @@ class NamespaceList {
                 }
 
             } else if (namespace !is null) {
+                // Namespaces end with 0 size lumps that end in _END.
                 if (lumpSize == 0) {
                     nameIndex = indexOf(lumpName, "_END");
                     if (nameIndex > 0) {
@@ -98,6 +113,7 @@ class NamespaceList {
                     }
                 }
 
+                // Track lumps that belong to the current namespace.
                 if (namespace.lumps.contains(lumpName)) {
                     console.writeLine(Color.IMPORTANT, "Overwriting %s:%s", namespace.name, lumpName);
                 }
@@ -105,6 +121,7 @@ class NamespaceList {
 
                 lump.setIsUsed(true);
             
+            // Any lumps that are not part of a namespace become loose lumps.
             } else if (namespace is null && lump.isUsed() == false) {
                 if (this.mLoose.lumps.contains(lumpName)) {
                     console.writeLine(Color.IMPORTANT, "Overwriting loose lump %s", lumpName);
@@ -115,6 +132,13 @@ class NamespaceList {
         }
     }
 
+    /**
+     * Adds the namespaces in this list to a WAD file.
+     * Does not process the loose lump namespace.
+     *
+     * @param wad
+     * The WAD file to add the namespaces to.
+     */
     public void addTo(WAD wad) {
         foreach (ref Namespace namespace; this.mNamespaces) {
             wad.addLump(format("%s_START", namespace.name));
@@ -125,19 +149,30 @@ class NamespaceList {
         }
     }
 
-       public void addLooseTo(WAD wad) {
+    /**
+     * Adds the lumps from the loose lump namespace to a WAD file.
+     *
+     * @param wad
+     * The WAD file to add the loose lumps to.
+     */
+    public void addLooseTo(WAD wad) {
         foreach (Lump lump; this.mLoose.lumps) {
             wad.addLump(lump);
         }
     }
 
-
+    /**
+     * Sorts the lumps inside this list's namespaces by their name.
+     */
     public void sort() {
         foreach (ref Namespace namespace; this.mNamespaces) {
             namespace.lumps.sort();
         }
     }
 
+    /**
+     * Sorts the lumps in the loose lumps namespace by their name.
+     */
     public void sortLoose() {
         this.mLoose.lumps.sort();
     }
