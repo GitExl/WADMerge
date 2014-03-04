@@ -72,10 +72,10 @@ public class TextureList {
 
     public void addFrom(WAD wad) {
         if (wad.containsLump("PNAMES") == false) {
-            throw new Exception("No PNAMES lump.");
+            return;
         }
         if (wad.containsLump("TEXTURE1") == false) {
-            throw new Exception("No TEXTURE1 lump.");
+            return;
         }
 
         Lump patches = wad.getLump("PNAMES");
