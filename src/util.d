@@ -29,6 +29,18 @@ import std.stream;
 import std.file;
 
 
+/**
+ * Reads a string from a Stream object that is padded with null characters.
+ *
+ * @param stream
+ * The Stream object to read the string from.
+ *
+ * @param pad
+ * The amount of characters that the string is padded with.
+ *
+ * @returns
+ * A non-padded string that was read from the stream.
+ */
 public string readPaddedString(Stream stream, uint pad) {
     uint length;
     char[] padName = new char[pad];
