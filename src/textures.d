@@ -117,6 +117,10 @@ public class TextureList {
      * The WAD file to write the textures and patch names to.
      */
     public void writeTo(WAD wad) {
+        if (this.mTextures.length == 0) {
+            return;
+        }
+
         // Create the data for a TEXTURES lump.
         MemoryStream textures = new MemoryStream();
         textures.write(cast(uint)this.mTextures.length);

@@ -104,7 +104,13 @@ int main(string[] argv) {
     foreach (string wadPath; wadPaths) {
         console.writeLine(Color.NORMAL, "Adding %s...", wadPath);
 
-        WAD wad = new WAD(wadPath);
+        WAD wad;
+        try {
+            wad = new WAD(wadPath);
+        } catch (Exception e) {
+            console.writeLine(Color.IMPORTANT, "Cannot read WAD: %s", e.msg);
+            continue;
+        }
         wadList ~= wad;
 
         // Merge in textures.
@@ -119,12 +125,6 @@ int main(string[] argv) {
         namespaces.addFrom(wad);
     }
 
-    // Update texture patch indices from patch names.
-    textures.updatePatchNames();
-    if (sortTextures == true) {
-        textures.sort();
-    }
-
     // Create the output WAD.
     WAD output = new WAD(WADType.PWAD);
     if (sortLoose == true) {
@@ -132,6 +132,10 @@ int main(string[] argv) {
     }
     namespaces.addLooseTo(output);
 
+    textures.updatePatchNames();
+    if (sortTextures == true) {
+        textures.sort();
+    }
     textures.writeTo(output);
 
     if (sortMaps == true) {

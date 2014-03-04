@@ -44,6 +44,7 @@ struct Namespace {
 
 
 class NamespaceList {
+
     // The namespaces in this namespace list.
     private Namespace[string] mNamespaces;
 
@@ -141,6 +142,10 @@ class NamespaceList {
      */
     public void addTo(WAD wad) {
         foreach (ref Namespace namespace; this.mNamespaces) {
+            if (namespace.lumps.length == 0) {
+                continue;
+            }
+
             wad.addLump(format("%s_START", namespace.name));
             foreach (Lump lump; namespace.lumps) {
                 wad.addLump(lump);
@@ -164,6 +169,10 @@ class NamespaceList {
      * The WAD file to add the loose lumps to.
      */
     public void addLooseTo(WAD wad) {
+        if (this.mLoose.lumps.length == 0) {
+            return;
+        }
+
         foreach (Lump lump; this.mLoose.lumps) {
             wad.addLump(lump);
         }
