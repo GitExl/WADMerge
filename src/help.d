@@ -28,7 +28,7 @@ module help;
 
 string HELP = "Merges multiple WAD files into one.
 
-Usage: wadmerge2 [input files] [options]
+Usage: wadmerge [input files] [options]
 
 -h, --help     Show this help message.
 -l, --license  Display this program's license.
