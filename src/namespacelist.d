@@ -40,6 +40,7 @@ struct Namespace {
 
 
 class NamespaceList {
+    private Namespace mLoose;
     private Namespace[string] mNamespaces;
 
 
@@ -95,11 +96,17 @@ class NamespaceList {
 
                 if (namespace.lumps.contains(lumpName)) {
                     console.writeLine(Color.IMPORTANT, "Overwriting %s:%s", namespace.name, lumpName);
-
                 }
                 namespace.lumps.update(lumpName, lump);
 
                 lump.setIsUsed(true);
+            
+            } else if (namespace is null && lump.isUsed() == false) {
+                if (this.mLoose.lumps.contains(lumpName)) {
+                    console.writeLine(Color.IMPORTANT, "Overwriting loose lump %s", lumpName);
+                }
+                this.mLoose.lumps.update(lumpName, lump);
+
             }
         }
     }
@@ -114,9 +121,20 @@ class NamespaceList {
         }
     }
 
+       public void addLooseTo(WAD wad) {
+        foreach (Lump lump; this.mLoose.lumps) {
+            wad.addLump(lump);
+        }
+    }
+
+
     public void sort() {
         foreach (ref Namespace namespace; this.mNamespaces) {
             namespace.lumps.sort();
         }
+    }
+
+    public void sortLoose() {
+        this.mLoose.lumps.sort();
     }
 }

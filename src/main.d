@@ -126,7 +126,11 @@ int main(string[] argv) {
 
     // Create the output WAD.
     WAD output = new WAD(WADType.PWAD);
-    addLooseLumps(output, wadList, sortLoose);
+    if (sortLoose == true) {
+        namespaces.sortLoose();
+    }
+    namespaces.addLooseTo(output);
+
     textures.writeTo(output);
 
     if (sortMaps == true) {
@@ -144,26 +148,6 @@ int main(string[] argv) {
     writefln("Done.");
 
     return 0;
-}
-
-private void addLooseLumps(WAD outputWAD, WAD[] wadList, bool sort) {
-    Lump[string] looseLumps;
-
-    foreach (WAD wad; wadList) {
-        foreach (Lump lump; wad.getLumps()) {
-            if (lump.isUsed() == false) {
-                looseLumps[lump.getName()] = lump;
-            }
-        }
-    }
-
-    string[] keys = looseLumps.keys.dup;
-    if (sort == true) {
-        keys.sort();
-    }
-    foreach (string key; keys) {
-        outputWAD.addLump(looseLumps[key]);
-    }
 }
 
 /**
