@@ -181,18 +181,14 @@ public class TextureList {
                 }
             }
         }
-        Lump texturesLump = new Lump("TEXTURE1");
-        texturesLump.putData(textures.data());
-        wad.addLump(texturesLump);
+        wad.addLump(new Lump("TEXTURE1", textures.data()));
 
         MemoryStream pnames = new MemoryStream();
         pnames.write(cast(uint)this.mPatchNames.length);
         foreach (string patchName; this.mPatchNames) {
             pnames.write(cast(ubyte[])leftJustify(patchName, 8, '\0'));
         }
-        Lump pnamesLump = new Lump("PNAMES");
-        pnamesLump.putData(pnames.data());
-        wad.addLump(pnamesLump);
+        wad.addLump(new Lump("PNAMES", pnames.data()));
     }
 
     public void mergeWith(TextureList otherList) {

@@ -51,6 +51,12 @@ public class Lump {
         this.mName = name;
     }
 
+    public this(string name, ubyte[] data) {
+        this.mName = name;
+        this.mSize = data.length;
+        this.mData = data;
+    }
+
     public this(uint offset, uint size, string name) {
         this.mOffset = offset;
         this.mSize = size;
