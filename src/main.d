@@ -39,6 +39,7 @@ import help;
 import namespacelist;
 import util;
 import orderedaa;
+import textlist;
 
 
 // Version information.
@@ -61,6 +62,7 @@ int main(string[] argv) {
     string outputFile = "merged.wad";
     bool overwrite = false;
     bool filterPatches = true;
+    bool mergeText = true;
     bool sortNamespaces = true;
     bool sortMaps = true;
     bool sortLoose = false;
@@ -74,6 +76,7 @@ int main(string[] argv) {
             "output|o",       &outputFile,
             "overwrite|w",    &overwrite,
             "filter-patches", &filterPatches,
+            "merge-text",     &mergeText,
             "sort-ns",        &sortNamespaces,
             "sort-maps",      &sortMaps,
             "sort-loose",     &sortLoose,
@@ -103,6 +106,7 @@ int main(string[] argv) {
     TextureList textures = new TextureList();
     MapList maps = new MapList();
     NamespaceList namespaces = new NamespaceList();
+    TextList textLumps = new TextList();
 
     // Read and process each WAD file.
     WAD[] wadList;
@@ -127,6 +131,10 @@ int main(string[] argv) {
 
         textures.mergeWith(wadTextures);
         maps.addFrom(wad);
+        if (mergeText == true) {
+            textLumps.sort();
+            textLumps.addFrom(wad);
+        }
         namespaces.addFrom(wad);
     }
 
@@ -136,6 +144,10 @@ int main(string[] argv) {
         namespaces.sortLoose();
     }
     namespaces.addLooseTo(output);
+
+    if (mergeText == true) {
+        textLumps.addTo(output);
+    }
 
     textures.updatePatchNames();
     if (sortTextures == true) {

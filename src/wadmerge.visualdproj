@@ -288,8 +288,11 @@
   <File path="license.d" />
   <File path="main.d" />
   <File path="maplist.d" />
+  <File path="maplumps.d" />
   <File path="namespacelist.d" />
   <File path="orderedaa.d" />
+  <File path="textlumps.d" />
+  <File path="textlist.d" />
   <File path="textures.d" />
   <File path="util.d" />
   <File path="wad.d" />

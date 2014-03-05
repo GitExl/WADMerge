@@ -23,26 +23,58 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-module help;
+module textlumps;
 
 
-string HELP = "Merges multiple WAD files into one.
+string[] TEXT_LUMPS = [
+    // Doom
+    "DMXGUS",
 
-Usage: wadmerge [input files] [options]
+    // Hexen
+    "MAPINFO",
+    "ANIMDEFS",
+    "SNDINFO",
+    "SNDSEQ",
 
--h, --help     Show this help message.
--l, --license  Display this program's license.
+    // ZDoom
+    "ALTHUDCF",
+    "CVARINFO",
+    "DECALDEF",
+    "DECORATE",
+    "DEHSUPP",
+    "FSGLOBAL",
+    "FONTDEFS",
+    "GAMEINFO",
+    "GLDEFS",
+    "KEYCONF",
+    "LANGUAGE",
+    "LOADACS",
+    "LOCKDEFS",
+    "MENUDEF",
+    "MODELDEF",
+    "MUSINFO",
+    "PALVERS",
+    "REVERBS",
+    "S_SKIN",
+    "SBARINFO",
+    "SCRIPTS",
+    "SECRETS",
+    "TEAMINFO",
+    "TERRAIN",
+    "TEXTCOLO",
+    "TEXTURES",
+    "VOXELDEF",
+    "XHAIRS",
+    "X11R6RGB",
+    "ZMAPINFO",
 
-Output
--o, --output=path      Set the output WAD filename. Default: merged.wad
--w, --overwrite        Overwrite the output file without asking for
-                       confirmation.
---filter-patches=true  Do not include patch graphic lumps that are not present
-                       in any texture definition.
---merge-text=true      Merges text-based lumps together.
+    // Skulltag
+    "ANCRINFO",
+    "BOTINFO",
+    "CMPGNINF",
+    "SECTINFO",
+    "SKININFO",
 
-Sorting
---sort-ns=true         Sort namespaced lumps alphabetically.
---sort-maps=true       Sort maps alphabetically.
---sort-loose=false     Sort loose lumps alphabetically.
---sort-textures=false  Sort textures alphabetically.";
+    // Doomsday
+    "DD_DEFNS",
+];
