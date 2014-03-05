@@ -25,7 +25,6 @@
 
 module texturelist;
 
-import std.stdio;
 import std.stream;
 import std.string;
 
@@ -36,37 +35,43 @@ import orderedaa;
 
 
 // A patch that is part of a texture definition.
-public struct TexturePatch {
+public struct PatchDef {
+    string patchName;
+    short patchIndex;
     short offsetX;
     short offsetY;
-    ushort patchIndex;
-    string patchName;
 }
 
 // A texture definition.
-public struct Texture {
-    ushort width;
-    ushort height;
+public struct TextureDef {
     string name;
-    TexturePatch[] patches;
+    short width;
+    short height;
+    PatchDef[] patches;
 }
 
 
+/**
+ * A texturelist reads and writes Doom TEXTURE and PNAMES lumps.
+ *
+ * See http://doomwiki.org/wiki/TEXTURE1_and_TEXTURE2 and http://doomwiki.org/wiki/PNAMES for more
+ * details about these lumps.
+ */
 public class TextureList {
 
-    // A list of texture definitions.
-    private OrderedAA!(string,Texture) mTextures;
+    // List of texture definitions.
+    private OrderedAA!(string,TextureDef) mTextures;
 
     // Patch names, by index.
     private string[] mPatchNames;
 
-    // If true, the textures that were last read from a WAD file were
-    // in Strife 1.1 format.
+    // If true, the textures that were last read from a WAD file were in Strife 1.1 format.
+    // If true, when textures are written to a WAD file, the Strife 1.1 format will be used.
     private bool mStrifeMode;
 
 
     this() {
-        this.mTextures = new OrderedAA!(string,Texture);
+        this.mTextures = new OrderedAA!(string,TextureDef);
     }
 
     this(WAD wad) {
@@ -81,7 +86,7 @@ public class TextureList {
 
     /**
      * Adds textures and patch names from a WAD file.
-     * This will read the WAD's PNAMES and TEXTURE* lumps.
+     * This will read the WAD's PNAMES and TEXTURE lumps.
      *
      * @param wad
      * The WAD file to read the texture information from.
@@ -99,10 +104,12 @@ public class TextureList {
         readPatchNames(patches.getStream());
         patches.setIsUsed(true);
 
-        // Read texture lumps. If TEXTURE2 is present, add the textures from that lump as well.
+        // Read texture data.
         Lump texture1 = wad.getLump("TEXTURE1");
         this.readTextures(texture1.getStream());
         texture1.setIsUsed(true);
+
+        // If TEXTURE2 is present, add the textures from that as well.
         if (wad.containsLump("TEXTURE2") == true) {
             Lump texture2 = wad.getLump("TEXTURE2");
             this.readTextures(texture2.getStream());
@@ -121,13 +128,13 @@ public class TextureList {
             return;
         }
 
-        // Create the data for a TEXTURES lump.
+        // Create the data for a TEXTURE lump.
         MemoryStream textures = new MemoryStream();
         textures.write(cast(uint)this.mTextures.length);
 
         // Write offsets to the texture definitions in this data.
         uint offset = 4 + this.mTextures.length * 4;
-        foreach (Texture texture; this.mTextures) {
+        foreach (ref TextureDef texture; this.mTextures) {
             textures.write(offset);
 
             // The size of a normal texture definition is 22 bytes, 18 for Strife textures.
@@ -140,7 +147,7 @@ public class TextureList {
         }
 
         // Write texture definitions.
-        foreach (Texture texture; this.mTextures) {
+        foreach (ref TextureDef texture; this.mTextures) {
             textures.write(cast(ubyte[])leftJustify(texture.name, 8, '\0'));
             textures.write(cast(uint)0);
             textures.write(texture.width);
@@ -153,7 +160,7 @@ public class TextureList {
             textures.write(cast(ushort)texture.patches.length);
 
             // Write the patch definitions for the current texture.
-            foreach (TexturePatch patch; texture.patches) {
+            foreach (ref PatchDef patch; texture.patches) {
                 textures.write(patch.offsetX);
                 textures.write(patch.offsetY);
                 textures.write(patch.patchIndex);
@@ -184,7 +191,7 @@ public class TextureList {
      * The other TextureList object to merge with this one.
      */
     public void mergeWith(TextureList otherList) {
-        foreach (ref Texture otherTexture; otherList.getTextures()) {
+        foreach (ref TextureDef otherTexture; otherList.getTextures()) {
             
             // Overwrite the existing texture if the other texture differs.
             if (this.mTextures.contains(otherTexture.name)) {
@@ -209,10 +216,11 @@ public class TextureList {
         uint[string] patchIndices;
 
         this.mPatchNames.length = 0;
-        foreach (ref Texture texture; this.mTextures) {
-            foreach (ref TexturePatch patch; texture.patches) {
+        foreach (ref TextureDef texture; this.mTextures) {
+            foreach (ref PatchDef patch; texture.patches) {
+
                 // Add patch indices for newly encountered patch names.
-                if (!(patch.patchName in patchIndices)) {
+                if (patch.patchName !in patchIndices) {
                     this.mPatchNames ~= patch.patchName;
                     patchIndices[patch.patchName] = this.mPatchNames.length - 1;
                 }
@@ -231,24 +239,25 @@ public class TextureList {
     }
 
     private void readTextures(MemoryStream data) {
-        uint textureCount;
-        uint[] textureOffsets;
+        int textureCount;
+        int[] textureOffsets;
+        ushort unused;
+        short patchCount;
 
         data.seek(0, SeekPos.Set);
 
         // Allocate room for the amount of textures in the texture lump.
         data.read(textureCount);
-        textureOffsets = new uint[textureCount];
+        textureOffsets = new int[textureCount];
         for (int index; index < textureCount; index++) {
             data.read(textureOffsets[index]);
         }
 
-        ushort unused;
-        ushort patchCount;
+        // Read the texture definitions themselves.
         foreach (uint textureIndex, uint offset; textureOffsets) {
             data.seek(offset, SeekPos.Set);
 
-            Texture texture;
+            TextureDef texture;
             texture.name = readPaddedString(data, 8);
             data.read(unused);
             data.read(unused);
@@ -256,7 +265,7 @@ public class TextureList {
             data.read(texture.height);
             data.read(unused);
 
-            // Strife 1.1 texture lumps do not store some unused bytes.
+            // Strife 1.1 texture lumps do not contain some unused bytes.
             if (unused != 0) {
                 patchCount = cast(ushort)unused;
                 this.mStrifeMode = true;
@@ -265,8 +274,9 @@ public class TextureList {
                 data.read(patchCount);
             }
 
+            // Read all patch definitions for this texture.
             for (uint patchIndex; patchIndex < patchCount; patchIndex++) {
-                TexturePatch patch;
+                PatchDef patch;
 
                 data.read(patch.offsetX);
                 data.read(patch.offsetY);
@@ -281,26 +291,29 @@ public class TextureList {
                 texture.patches ~= patch;
             }
 
-            this.mTextures.add(cast(string)texture.name, texture);
+            this.mTextures.add(texture.name, texture);
         }
     }
 
     private void readPatchNames(MemoryStream data) {
-        uint count;
+        int count;
         data.read(count);
 
+        // Read patchnames as NULL padded 8 byte strings.
         this.mPatchNames.length = 0;
         for (int index = 0; index < count; index++) {
             this.mPatchNames ~= readPaddedString(data, 8).dup;
         }
     }
 
-    private bool texturesAreEqual(Texture a, Texture b) {
+    private bool texturesAreEqual(TextureDef a, TextureDef b) {
+        // Compare texture definition properties.
         if (a.name != b.name) { return false; }
         if (a.width != b.width) { return false; }
         if (a.height != b.height) { return false; }
         if (a.patches.length != b.patches.length) { return false; }
 
+        // Compare patch definitions.
         for (int index = 0; index < a.patches.length; index++) {
             if (a.patches[index].offsetX != b.patches[index].offsetX) { return false; }
             if (a.patches[index].offsetY != b.patches[index].offsetY) { return false; }
@@ -310,7 +323,7 @@ public class TextureList {
         return true;
     }
 
-    public OrderedAA!(string,Texture) getTextures() {
+    public OrderedAA!(string,TextureDef) getTextures() {
         return this.mTextures;
     }
     
