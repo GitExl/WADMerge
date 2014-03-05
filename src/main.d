@@ -132,7 +132,6 @@ int main(string[] argv) {
         textures.mergeWith(wadTextures);
         maps.addFrom(wad);
         if (mergeText == true) {
-            textLumps.sort();
             textLumps.addFrom(wad);
         }
         namespaces.addFrom(wad);
@@ -146,6 +145,7 @@ int main(string[] argv) {
     namespaces.addLooseTo(output);
 
     if (mergeText == true) {
+        textLumps.sort();
         textLumps.addTo(output);
     }
 
