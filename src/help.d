@@ -34,8 +34,11 @@ Usage: wadmerge [input files] [options]
 -l, --license  Display this program's license.
 
 Output
--o, --output=path  Set the output WAD filename. Default: merged.wad
--w, --overwrite    Overwrite the output file without asking for confirmation.
+-o, --output=path      Set the output WAD filename. Default: merged.wad
+-w, --overwrite        Overwrite the output file without asking for
+                       confirmation.
+--filter-patches=true  Do not include patch graphic lumps that are not present
+                       in any texture definition.
 
 Sorting
 --sort-ns=true         Sort namespaced lumps alphabetically.

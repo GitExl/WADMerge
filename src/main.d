@@ -37,6 +37,8 @@ import console;
 import license;
 import help;
 import namespacelist;
+import util;
+import orderedaa;
 
 
 // Version information.
@@ -58,6 +60,7 @@ int main(string[] argv) {
     // Command line parameter variables and their default values.
     string outputFile = "merged.wad";
     bool overwrite = false;
+    bool filterPatches = true;
     bool sortNamespaces = true;
     bool sortMaps = true;
     bool sortLoose = false;
@@ -66,14 +69,15 @@ int main(string[] argv) {
     // Parse command line parameters.
     try {
         getopt(argv,
-            "license|l",     &writeLicense,
-            "help|h|?",      &writeHelp,
-            "output|o",      &outputFile,
-            "overwrite|w",   &overwrite,
-            "sort-ns",       &sortNamespaces,
-            "sort-maps",     &sortMaps,
-            "sort-loose",    &sortLoose,
-            "sort-textures", &sortTextures
+            "license|l",      &writeLicense,
+            "help|h|?",       &writeHelp,
+            "output|o",       &outputFile,
+            "overwrite|w",    &overwrite,
+            "filter-patches", &filterPatches,
+            "sort-ns",        &sortNamespaces,
+            "sort-maps",      &sortMaps,
+            "sort-loose",     &sortLoose,
+            "sort-textures",  &sortTextures
         );
     } catch (Exception e) {
         stderr.writeln(e.msg);
@@ -147,6 +151,12 @@ int main(string[] argv) {
     if (sortNamespaces == true) {
         namespaces.sort();
     }
+    if (filterPatches == true) {
+        string[] patchNames = textures.getPatchNames();
+        if (patchNames.length > 0) {
+            filterNamespace(namespaces.getNamespace("PP"), patchNames);
+        }
+    }
     namespaces.addTo(output);
 
     writefln("Writing %s...", outputFile);
@@ -154,6 +164,32 @@ int main(string[] argv) {
     writefln("Done.");
 
     return 0;
+}
+
+/**
+ * Filters a namespace's lumps so that only those from a list of lump names appear in it.
+ *
+ * @param namespace
+ * The namespace of which the lumps are filtered.
+ *
+ * @param lumpName
+ * A string array of lump names that will be included in the filtered namespace lump list.
+ */
+private void filterNamespace(ref Namespace namespace, string[] lumpNames) {
+    string lumpName;
+
+    // Create a new list of lumps containing only those that appear in the lumpNames list.
+    OrderedAA!(string,Lump) newLumps = new OrderedAA!(string,Lump);
+    foreach (Lump lump; namespace.lumps) {
+        lumpName = lump.getName();
+        if (getArrayIndex(lumpNames, lumpName) > -1) {
+            newLumps.add(lumpName, lump);
+        } else {
+            console.writeLine(Color.INFO, "Not adding unused lump %s:%s", namespace.name, lumpName);
+        }
+    }
+
+    namespace.lumps = newLumps;
 }
 
 /**

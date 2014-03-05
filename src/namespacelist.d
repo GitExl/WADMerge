@@ -200,4 +200,8 @@ class NamespaceList {
     public void sortLoose() {
         this.mLoose.lumps.sort();
     }
+
+    public ref Namespace getNamespace(string name) {
+        return this.mNamespaces[name];
+    }
 }

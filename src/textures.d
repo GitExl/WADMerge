@@ -321,4 +321,8 @@ public class TextureList {
     public bool getStrifeMode() {
         return this.mStrifeMode;
     }
+
+    public string[] getPatchNames() {
+        return this.mPatchNames;
+    }
 }
