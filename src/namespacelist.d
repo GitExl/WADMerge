@@ -116,19 +116,26 @@ class NamespaceList {
 
                 // Track lumps that belong to the current namespace.
                 if (namespace.lumps.contains(lumpName)) {
-                    console.writeLine(Color.IMPORTANT, "Overwriting %s:%s", namespace.name, lumpName);
+                    if (lump.areContentsEqual(namespace.lumps[lumpName]) == false) {
+                        console.writeLine(Color.IMPORTANT, "Overwriting %s:%s", namespace.name, lumpName);
+                        namespace.lumps.update(lumpName, lump);
+                    }
+                } else {
+                    namespace.lumps.add(lumpName, lump);
                 }
-                namespace.lumps.update(lumpName, lump);
 
                 lump.setIsUsed(true);
             
             // Any lumps that are not part of a namespace become loose lumps.
             } else if (namespace is null && lump.isUsed() == false) {
                 if (this.mLoose.lumps.contains(lumpName)) {
-                    console.writeLine(Color.IMPORTANT, "Overwriting loose lump %s", lumpName);
+                    if (lump.areContentsEqual(this.mLoose.lumps[lumpName]) == false) {
+                        console.writeLine(Color.IMPORTANT, "Overwriting loose lump %s", lumpName);
+                        this.mLoose.lumps.update(lumpName, lump);
+                    }
+                } else {
+                    this.mLoose.lumps.add(lumpName, lump);
                 }
-                this.mLoose.lumps.update(lumpName, lump);
-
             }
         }
     }

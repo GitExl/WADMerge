@@ -110,6 +110,30 @@ public class Lump {
         this.mSize = data.length;
     }
 
+    /**
+     * Compares the data of this lump to that of another Lump.
+     *
+     * @param other
+     * The Lump to compare the data with.
+     *
+     * @returns
+     * true if the contents are equal, false if not.
+     */
+    public bool areContentsEqual(Lump other) {
+        ubyte[] otherData = other.getData();
+        if (otherData.length != this.mData.length) {
+            return false;
+        }
+
+        for (int index = 0; index < otherData.length; index++) {
+            if (this.mData[index] != otherData[index]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public ubyte[] getData() {
         return this.mData;
     }
