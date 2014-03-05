@@ -30,6 +30,8 @@ import std.stdio;
 import wad;
 import console;
 import orderedaa;
+import maplumps;
+import util;
 
 
 // Recognized map types.
@@ -173,13 +175,6 @@ class MapList {
     }
 
     private bool isMapLump(string lumpName) {
-        if (lumpName == "THINGS" || lumpName == "VERTEXES" || lumpName == "SIDEDEFS" ||
-            lumpName == "SECTORS" || lumpName == "SEGS" || lumpName == "SSECTORS" ||
-            lumpName == "NODES" || lumpName == "LINEDEFS" || lumpName == "REJECT" ||
-            lumpName == "BLOCKMAP" || lumpName == "BEHAVIOR" || lumpName == "SCRIPTS") {
-                return true;
-        }
-
-        return false;
+        return (getArrayIndex(MAP_LUMPS, lumpName) > -1);
     }
 }
