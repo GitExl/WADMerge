@@ -23,7 +23,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-module textures;
+module texturelist;
 
 import std.stdio;
 import std.stream;

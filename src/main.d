@@ -31,14 +31,15 @@ import std.algorithm;
 import std.c.stdlib;
 
 import wad;
-import textures;
-import maplist;
 import console;
 import license;
 import help;
-import namespacelist;
 import util;
 import orderedaa;
+
+import texturelist;
+import maplist;
+import namespacelist;
 import textlist;
 
 
