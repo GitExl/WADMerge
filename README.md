@@ -1,6 +1,6 @@
 WADMerge
 ========
-Merges multiple WAD files into one. Takes care of merging TEXTURE and PNAMES lumps, as well as merging multiple maps and namespaced lumps into one WAD. Run it without command line arguments to see usage instructions and available options.
+Merges multiple WAD files into one. Takes care of merging TEXTURE and PNAMES lumps, as well as merging multiple maps and namespaced lumps into one WAD. Known text-based lumps are concatenated, but no guarantees are given for the results. Run it without command line arguments to see usage instructions and available options.
 
 Compiling
 ---------
