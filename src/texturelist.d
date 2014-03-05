@@ -148,7 +148,7 @@ public class TextureList {
 
         // Write texture definitions.
         foreach (ref TextureDef texture; this.mTextures) {
-            textures.write(cast(ubyte[])leftJustify(texture.name, 8, '\0'));
+            writePaddedString(textures, texture.name, 8);
             textures.write(cast(uint)0);
             textures.write(texture.width);
             textures.write(texture.height);
@@ -175,7 +175,7 @@ public class TextureList {
         MemoryStream pnames = new MemoryStream();
         pnames.write(cast(uint)this.mPatchNames.length);
         foreach (string patchName; this.mPatchNames) {
-            pnames.write(cast(ubyte[])leftJustify(patchName, 8, '\0'));
+            writePaddedString(pnames, patchName, 8);
         }
 
         // Add the new lumps to the WAD file.

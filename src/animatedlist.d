@@ -27,7 +27,6 @@ module animatedlist;
 
 import std.stdio;
 import std.stream;
-import std.string;
 
 import wad;
 import util;
@@ -102,8 +101,8 @@ class AnimatedList {
         MemoryStream animated = new MemoryStream();
         foreach (ref AnimateDef anim; this.mAnimations) {
             animated.write(anim.type);
-            animated.write(cast(ubyte[])leftJustify(anim.textureLast, 9, '\0'));
-            animated.write(cast(ubyte[])leftJustify(anim.textureFirst, 9, '\0'));
+            writePaddedString(animated, anim.textureLast, 9);
+            writePaddedString(animated, anim.textureFirst, 9);
             animated.write(anim.speed);
         }
 
@@ -119,8 +118,8 @@ class AnimatedList {
     private void writeSwitches(WAD wad) {
         MemoryStream switches = new MemoryStream();
         foreach (ref SwitchesDef sw; this.mSwitches) {
-            switches.write(cast(ubyte[])leftJustify(sw.textureOff, 9, '\0'));
-            switches.write(cast(ubyte[])leftJustify(sw.textureOn, 9, '\0'));
+            writePaddedString(switches, sw.textureOff, 9);
+            writePaddedString(switches, sw.textureOn, 9);
             switches.write(sw.iwad);
         }
 

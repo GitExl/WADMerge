@@ -27,6 +27,7 @@ module util;
 
 import std.stream;
 import std.file;
+import std.string;
 
 
 /**
@@ -53,6 +54,23 @@ public string readPaddedString(Stream stream, uint pad) {
     }
 
     return cast(string)padName[0..length].dup;
+}
+
+/**
+ * Writes a null-padded string to a stream object.
+ *
+ * @param stream
+ * The Stream object to write the string to.
+ *
+ * @param data
+ * The data to write to the stream.
+ *
+ * @param pad
+ * How many bytes to pad the string to using null characters.
+ */
+
+public void writePaddedString(Stream stream, string data, uint pad) {
+    stream.write(cast(ubyte[])leftJustify(data, pad, '\0'));
 }
 
 /**
