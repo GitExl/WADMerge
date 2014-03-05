@@ -44,6 +44,7 @@ immutable string NAME = "WADMerge";
 immutable ubyte VERSION_MAJOR = 2;
 immutable ubyte VERSION_MINOR = 0;
 immutable ubyte VERSION_PATCH = 0;
+immutable bool VERSION_BETA = true;
 
 
 int main(string[] argv) {
@@ -159,10 +160,20 @@ int main(string[] argv) {
  * Outputs the program's header text.
  */
 private void writeHeader() {
-    writefln("%s, version %d.%d.%d", NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+    if (VERSION_BETA == true) {
+        writefln("%s, version %d.%d.%d beta", NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+    } else {
+        writefln("%s, version %d.%d.%d", NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+    }
+
     writeln("Copyright (c) 2014, Dennis Meuwissen");
     writeln("All rights reserved.");
     writeln();
+
+    if (VERSION_BETA == true) {
+        console.writeLine(Color.INFO, "This is a beta version, bugs may be present!");
+        writeln();
+    }
 }
 
 /**
