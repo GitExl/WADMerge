@@ -107,8 +107,8 @@ class AnimatedList {
 
         // Write terminator entry.
         animated.write(cast(ubyte)0xFF);
-        animated.write(cast(ubyte[])"\0\0\0\0\0\0\0\0");
-        animated.write(cast(ubyte[])"\0\0\0\0\0\0\0\0");
+        animated.write(cast(ubyte[])"\0\0\0\0\0\0\0\0\0");
+        animated.write(cast(ubyte[])"\0\0\0\0\0\0\0\0\0");
         animated.write(cast(uint)0);
 
         wad.addLump(new Lump("ANIMATED", animated.data()));
@@ -123,8 +123,8 @@ class AnimatedList {
         }
 
         // Write terminator entry.
-        switches.write(cast(ubyte[])"\0\0\0\0\0\0\0\0");
-        switches.write(cast(ubyte[])"\0\0\0\0\0\0\0\0");
+        switches.write(cast(ubyte[])"\0\0\0\0\0\0\0\0\0");
+        switches.write(cast(ubyte[])"\0\0\0\0\0\0\0\0\0");
         switches.write(cast(ushort)0);
 
         wad.addLump(new Lump("SWITCHES", switches.data()));
