@@ -41,6 +41,7 @@ import texturelist;
 import maplist;
 import namespacelist;
 import textlist;
+import animatedlist;
 
 
 // Version information.
@@ -75,10 +76,12 @@ int main(string[] argv) {
         getopt(argv,
             "license|l",      &writeLicense,
             "help|h|?",       &writeHelp,
+
             "output|o",       &outputFile,
             "overwrite|w",    &overwrite,
             "filter-patches", &filterPatches,
             "merge-text",     &mergeText,
+
             "sort-ns",        &sortNamespaces,
             "sort-maps",      &sortMaps,
             "sort-loose",     &sortLoose,
@@ -110,6 +113,7 @@ int main(string[] argv) {
     MapList maps = new MapList();
     NamespaceList namespaces = new NamespaceList();
     TextList textLumps = new TextList();
+    AnimatedList animated = new AnimatedList();
 
     // Read and process each WAD file.
     WAD[] wadList;
@@ -131,8 +135,9 @@ int main(string[] argv) {
             textures.setStrifeMode(true);
             console.writeLine(Color.INFO, "Merging textures in Strife mode.");
         }
-
         textures.mergeWith(wadTextures);
+        
+        animated.addFrom(wad);
         maps.addFrom(wad);
         if (mergeText == true) {
             textLumps.addFrom(wad);
@@ -153,6 +158,8 @@ int main(string[] argv) {
         }
         textLumps.addTo(output);
     }
+
+    animated.addTo(output);
 
     textures.updatePatchNames();
     if (sortTextures == true) {
