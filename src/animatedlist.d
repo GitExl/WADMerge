@@ -25,7 +25,6 @@
 
 module animatedlist;
 
-import std.stdio;
 import std.stream;
 
 import wad;
@@ -150,7 +149,6 @@ class AnimatedList {
             // Do not add this animation to the list if it already exists.
             if (containsAnimation(*animated) == false) {
                 this.mAnimations ~= *animated;
-                writefln("%d %s %s %d", animated.type, animated.textureLast, animated.textureFirst, animated.speed);
             }
         }
     }
@@ -173,7 +171,6 @@ class AnimatedList {
             // Do not add this switch to the list if it already exists.
             if (containsSwitches(*switches) == false) {
                 this.mSwitches ~= *switches;
-                writefln("%s %s %d", switches.textureOff, switches.textureOn, switches.iwad);
             }
         }
     }
