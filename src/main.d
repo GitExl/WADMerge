@@ -45,7 +45,7 @@ import textlist;
 // Version information.
 immutable string NAME = "WADMerge";
 immutable ubyte VERSION_MAJOR = 2;
-immutable ubyte VERSION_MINOR = 0;
+immutable ubyte VERSION_MINOR = 1;
 immutable ubyte VERSION_PATCH = 0;
 immutable bool VERSION_BETA = true;
 
