@@ -26,6 +26,7 @@
 module maplumps;
 
 
+// A list of lump names that are part of known maps.
 string[] MAP_LUMPS = [
     "THINGS",
     "VERTEXES",

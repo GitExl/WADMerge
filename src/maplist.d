@@ -60,6 +60,10 @@ struct MapMarker {
 }
 
 
+/**
+ * Holds a list of map lump markers and how many lumps they contain. It is used to marge multiple
+ * maps from WAD files together. Aside from Doom map types, Hexen and UDMF maps are supported.
+ */
 class MapList {
 
     // The map markers in this list of maps.

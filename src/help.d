@@ -26,6 +26,7 @@
 module help;
 
 
+// Command line help text.
 string HELP = "Merges multiple WAD files into one.
 
 Usage: wadmerge [input files] [options]

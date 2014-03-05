@@ -39,6 +39,9 @@ struct TextLump {
 }
 
 
+/**
+ * A text list contains all text lumps found in a WAD file. It concatenates existing ones when added.
+ */
 class TextList {
 
     // The text lumps in this list.

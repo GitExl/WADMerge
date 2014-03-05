@@ -35,6 +35,7 @@ import orderedaa;
 
 // A namespace groups lumps by their type.
 struct Namespace {
+
     // The name of this namespace. SS, FF, PP, etc.
     string name;
 
@@ -43,6 +44,12 @@ struct Namespace {
 }
 
 
+/**
+ * Holds a list of namespaces and the lumps contained in them.
+ *
+ * A namespace is marked by a start lump, such as SS_START and an end lump like SS_END. All
+ * lumps inbetween these two markers will become part of the namespace called "SS".
+ */
 class NamespaceList {
 
     // The namespaces in this namespace list.

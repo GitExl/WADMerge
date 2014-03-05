@@ -28,6 +28,16 @@ module orderedaa;
 import std.algorithm;
 
 
+/**
+ * Simplistic implementation of an ordered associative array.
+ *
+ * This is built on top of a normal associative array which keeps track of the indices into a regular array.
+ * Items that are added are always appended to the array, and it's index added (or updated) in
+ * the associative array holding the keys.
+ *
+ * For items that are updated, the index is looked up in the associative array if it exists and the item is
+ * updated in the array, in place. It is added if they key does not exist in the associative array.
+ */
 class OrderedAA(K, I) {
 
     // The items in this array, in the order that they were added.

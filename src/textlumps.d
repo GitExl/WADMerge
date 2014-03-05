@@ -26,6 +26,8 @@
 module textlumps;
 
 
+// These lump names are known to be text based and multiple of it's kind can likely be
+// concatenated together.
 string[] TEXT_LUMPS = [
     // Doom
     "DMXGUS",

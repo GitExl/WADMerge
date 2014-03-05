@@ -42,6 +42,9 @@ public enum WADType : ubyte {
 }
 
 
+/**
+ * A single lump as it is found inside a Doom WAD file.
+ */
 public class Lump {
 
     // The offset of this lump in the containing WAD file.
@@ -168,6 +171,12 @@ public class Lump {
 }
 
 
+/**
+ * A WAD file (Where's All the Data?) contains data for a Doom engine game, laid out in the form
+ * of individual lumps.
+ *
+ * See http://doomwiki.org/wiki/WAD for more information about WAD files.
+ */
 public class WAD {
 
     // The type of this WAD file.
