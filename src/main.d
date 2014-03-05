@@ -67,6 +67,7 @@ int main(string[] argv) {
     bool sortMaps = true;
     bool sortLoose = false;
     bool sortTextures = false;
+    bool sortText = true;
 
     // Parse command line parameters.
     try {
@@ -80,7 +81,8 @@ int main(string[] argv) {
             "sort-ns",        &sortNamespaces,
             "sort-maps",      &sortMaps,
             "sort-loose",     &sortLoose,
-            "sort-textures",  &sortTextures
+            "sort-textures",  &sortTextures,
+            "sort-text",      &sortText
         );
     } catch (Exception e) {
         stderr.writeln(e.msg);
@@ -145,7 +147,9 @@ int main(string[] argv) {
     namespaces.addLooseTo(output);
 
     if (mergeText == true) {
-        textLumps.sort();
+        if (sortText == true) {
+            textLumps.sort();
+        }
         textLumps.addTo(output);
     }
 

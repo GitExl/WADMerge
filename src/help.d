@@ -45,4 +45,5 @@ Sorting
 --sort-ns=true         Sort namespaced lumps alphabetically.
 --sort-maps=true       Sort maps alphabetically.
 --sort-loose=false     Sort loose lumps alphabetically.
---sort-textures=false  Sort textures alphabetically.";
+--sort-textures=false  Sort textures alphabetically.
+--sort-text=true       Sort text lumps alphabetically.";
