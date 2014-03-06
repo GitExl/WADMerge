@@ -1,3 +1,10 @@
+Version 2.2.0 beta
+------------------
+- Added: merging of ANIMATED and SWITCHES lumps.
+- Changed: text lump sorting is now toggleable.
+- Fixed: text lump sorting did not sort every lump.
+- Fixed: the default console text color is now maintained throughout.
+
 Version 2.1.0 beta
 ------------------
 - Added: text lumps like ANIMDEFS and MAPINFO are now merged. They are simply joined together, so in some cases the result may not be a valid or useable file.
