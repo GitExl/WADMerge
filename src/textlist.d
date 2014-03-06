@@ -59,7 +59,7 @@ class TextList {
      * @param wad
      * The WAD file to add text lumps from.
      */
-    public void addFrom(WAD wad) {
+    public void readFrom(WAD wad) {
         string lumpName;
         TextLump* text;
 

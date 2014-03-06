@@ -137,12 +137,12 @@ int main(string[] argv) {
         }
         textures.mergeWith(wadTextures);
         
-        animated.addFrom(wad);
-        maps.addFrom(wad);
+        animated.readFrom(wad);
+        maps.readFrom(wad);
         if (mergeText == true) {
-            textLumps.addFrom(wad);
+            textLumps.readFrom(wad);
         }
-        namespaces.addFrom(wad);
+        namespaces.readFrom(wad);
     }
 
     // Create the output WAD.

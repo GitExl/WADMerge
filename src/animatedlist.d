@@ -70,7 +70,7 @@ class AnimatedList {
      * @param wad
      * The WAD file to read animations and switches from.
      */
-    public void addFrom(WAD wad) {
+    public void readFrom(WAD wad) {
         Lump animated = wad.getLump("ANIMATED");
         if (animated !is null) {
             readAnimated(animated.getStream());

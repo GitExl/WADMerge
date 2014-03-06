@@ -76,7 +76,7 @@ public class TextureList {
 
     this(WAD wad) {
         this();
-        this.addFrom(wad);
+        this.readFrom(wad);
     }
 
     this(MemoryStream data) {
@@ -91,7 +91,7 @@ public class TextureList {
      * @param wad
      * The WAD file to read the texture information from.
      */
-    public void addFrom(WAD wad) {
+    public void readFrom(WAD wad) {
         if (wad.containsLump("PNAMES") == false) {
             return;
         }

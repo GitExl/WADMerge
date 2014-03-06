@@ -80,7 +80,7 @@ class MapList {
      * @param wad
      * The WAD file to add map markers from.
      */
-    public void addFrom(WAD wad) {
+    public void readFrom(WAD wad) {
         MapMarker* marker;
         string lumpName;
 

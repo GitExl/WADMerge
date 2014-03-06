@@ -69,7 +69,7 @@ class NamespaceList {
      * @param wad
      * The WAD file to add namespaces from.
      */
-    public void addFrom(WAD wad) {
+    public void readFrom(WAD wad) {
         Namespace* namespace;
         string name;
         string lumpName;
