@@ -32,6 +32,9 @@ import util;
 import console;
 
 
+immutable ubyte[] NULL_STRING = cast(immutable ubyte[])"\0\0\0\0\0\0\0\0\0";
+
+
 // An animated texture definition.
 struct AnimateDef {
     ubyte type;
@@ -108,8 +111,8 @@ class AnimatedList {
 
         // Write terminator entry.
         animated.write(cast(ubyte)0xFF);
-        animated.write(cast(ubyte[])"\0\0\0\0\0\0\0\0\0");
-        animated.write(cast(ubyte[])"\0\0\0\0\0\0\0\0\0");
+        animated.write(NULL_STRING);
+        animated.write(NULL_STRING);
         animated.write(cast(uint)0);
 
         wad.addLump(new Lump("ANIMATED", animated.data()));
@@ -124,8 +127,8 @@ class AnimatedList {
         }
 
         // Write terminator entry.
-        switches.write(cast(ubyte[])"\0\0\0\0\0\0\0\0\0");
-        switches.write(cast(ubyte[])"\0\0\0\0\0\0\0\0\0");
+        switches.write(NULL_STRING);
+        switches.write(NULL_STRING);
         switches.write(cast(ushort)0);
 
         wad.addLump(new Lump("SWITCHES", switches.data()));
