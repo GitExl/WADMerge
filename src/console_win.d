@@ -44,7 +44,7 @@ enum ColorBits : ushort {
 
 // Predefined color bit combinations.
 enum Color : ushort {
-    NORMAL    = ColorBits.FOREGROUND_BLUE  | ColorBits.FOREGROUND_GREEN | ColorBits.FOREGROUND_RED,
+    NORMAL    = 0xFFFF,
     IMPORTANT = ColorBits.FOREGROUND_RED   | ColorBits.FOREGROUND_INTENSE,
     INFO      = ColorBits.FOREGROUND_GREEN | ColorBits.FOREGROUND_INTENSE
 }
@@ -80,7 +80,11 @@ public void init() {
  * Input arguments for the format string.
  */
 public void writeLine(Ushort, Char, A...)(in Ushort color, in Char[] fmt, A args) {
-    SetConsoleTextAttribute(consoleHandle, color);
+    if (color != 0xFFFF) {
+        SetConsoleTextAttribute(consoleHandle, color);
+    }
     writefln(fmt, args);
-    SetConsoleTextAttribute(consoleHandle, bufferInfo.wAttributes);
+    if (color != 0xFFFF) {
+        SetConsoleTextAttribute(consoleHandle, bufferInfo.wAttributes);
+    }
 }
