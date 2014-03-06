@@ -53,12 +53,13 @@ immutable bool VERSION_BETA = true;
 
 
 int main(string[] argv) {
-    console.init();
     writeHeader();
 
     if (argv.length == 1) {
         writeHelp();
     }
+
+    console.init();
 
     // Command line parameter variables and their default values.
     string outputFile = "merged.wad";
@@ -138,6 +139,7 @@ int main(string[] argv) {
         }
         textures.mergeWith(wadTextures);
         
+        // Merge in other resource types.
         animated.readFrom(wad);
         maps.readFrom(wad);
         if (mergeText == true) {
@@ -173,14 +175,16 @@ int main(string[] argv) {
     }
     maps.addTo(output);
 
-    if (sortNamespaces == true) {
-        namespaces.sort();
-    }
+    // Remove unused patch names.
     if (filterPatches == true) {
         string[] patchNames = textures.getPatchNames();
         if (patchNames.length > 0) {
             filterNamespace(namespaces.getNamespace("PP"), patchNames);
         }
+    }
+
+    if (sortNamespaces == true) {
+        namespaces.sort();
     }
     namespaces.addTo(output);
 
