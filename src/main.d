@@ -130,7 +130,8 @@ int main(string[] argv) {
         wadList ~= wad;
 
         // Merge in textures.
-        TextureList wadTextures = new TextureList(wad);
+        TextureList wadTextures = new TextureList();
+        wadTextures.readFrom(wad);
         if (wadTextures.getStrifeMode() == true && textures.getStrifeMode() == false) {
             textures.setStrifeMode(true);
             console.writeLine(Color.INFO, "Merging textures in Strife mode.");

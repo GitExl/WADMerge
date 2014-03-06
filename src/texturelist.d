@@ -74,16 +74,6 @@ public class TextureList {
         this.mTextures = new OrderedAA!(string,TextureDef);
     }
 
-    this(WAD wad) {
-        this();
-        this.readFrom(wad);
-    }
-
-    this(MemoryStream data) {
-        this();
-        this.readTextures(data);
-    }
-
     /**
      * Adds textures and patch names from a WAD file.
      * This will read the WAD's PNAMES and TEXTURE lumps.
