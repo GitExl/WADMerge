@@ -29,6 +29,7 @@ import std.stream;
 
 import wad;
 import util;
+import console;
 
 
 // An animated texture definition.
@@ -132,6 +133,7 @@ class AnimatedList {
 
     private void readAnimated(MemoryStream data) {
         AnimateDef* animated;
+        int index;
 
         while(1) {
             animated = new AnimateDef();
@@ -147,7 +149,11 @@ class AnimatedList {
             data.read(animated.speed);
 
             // Do not add this animation to the list if it already exists.
-            if (containsAnimation(*animated) == false) {
+            index = getAnimationIndex(*animated);
+            if (index > -1) {
+                this.mAnimations[index] = *animated;
+                console.writeLine(Color.IMPORTANT, "Overwriting animated texture %s - %s", animated.textureLast, animated.textureFirst);
+            } else {
                 this.mAnimations ~= *animated;
             }
         }
@@ -155,6 +161,7 @@ class AnimatedList {
 
     private void readSwitches(MemoryStream data) {
         SwitchesDef* switches;
+        int index;
 
         while(1) {
             switches = new SwitchesDef();
@@ -168,35 +175,36 @@ class AnimatedList {
                 break;
             }
 
-            // Do not add this switch to the list if it already exists.
-            if (containsSwitches(*switches) == false) {
+            // Overwrite existing definitions.
+            index = getSwitchesIndex(*switches);
+            if (index > -1) {
+                this.mSwitches[index] = *switches;
+                console.writeLine(Color.IMPORTANT, "Overwriting switch textures %s - %s", switches.textureOff, switches.textureOn);
+            } else {
                 this.mSwitches ~= *switches;
             }
         }
     }
 
-    private bool containsAnimation(AnimateDef animation) {
-        foreach (ref AnimateDef anim; this.mAnimations) {
+    private int getAnimationIndex(AnimateDef animation) {
+        foreach (int index, ref AnimateDef anim; this.mAnimations) {
             if (anim.textureFirst == animation.textureFirst &&
-                anim.textureLast == animation.textureLast &&
-                anim.speed == animation.speed &&
-                anim.type == animation.type) {
-                return true;
+                anim.textureLast == animation.textureLast) {
+                return index;
             }
         }
 
-        return false;
+        return -1;
     }
 
-    private bool containsSwitches(SwitchesDef switches) {
-        foreach (ref SwitchesDef switchdef; this.mSwitches) {
-            if (switchdef.iwad == switches.iwad &&
-                switchdef.textureOff == switches.textureOff &&
+    private int getSwitchesIndex(SwitchesDef switches) {
+        foreach (int index, ref SwitchesDef switchdef; this.mSwitches) {
+            if (switchdef.textureOff == switches.textureOff &&
                 switchdef.textureOn == switches.textureOn) {
-                return true;
+                return index;
             }
         }
 
-        return false;
+        return -1;
     }
 }
