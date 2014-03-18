@@ -28,10 +28,11 @@ module util;
 import std.stream;
 import std.file;
 import std.string;
+import std.encoding;
 
 
 /**
- * Reads a string from a Stream object that is padded with null characters.
+ * Reads an ASCII string from a Stream object that is padded with null characters.
  *
  * @param stream
  * The Stream object to read the string from.
@@ -42,22 +43,25 @@ import std.string;
  * @returns
  * A non-padded string that was read from the stream.
  */
-public string readPaddedString(Stream stream, uint pad) {
+public string readPaddedString(Stream stream, const uint pad) {
     uint length;
-    char[] padName = new char[pad];
+    ubyte[] padName = new ubyte[pad];
 
-    stream.read(cast(ubyte[])padName);
+    stream.read(padName);
     for (length = 0; length < pad; length++) {
         if (padName[length] == 0) {
             break;
         }
     }
 
-    return cast(string)padName[0..length].dup;
+    //return cast(string)padName[0..length].dup;
+    string output;
+    transcode(cast(AsciiString)padName[0..length], output);
+    return output;
 }
 
 /**
- * Writes a null-padded string to a stream object.
+ * Writes a null-padded ASCII string to a stream object.
  *
  * @param stream
  * The Stream object to write the string to.
@@ -68,9 +72,10 @@ public string readPaddedString(Stream stream, uint pad) {
  * @param pad
  * How many bytes to pad the string to using null characters.
  */
-
-public void writePaddedString(Stream stream, string data, uint pad) {
-    stream.write(cast(ubyte[])leftJustify(data, pad, '\0'));
+public void writePaddedString(Stream stream, const string data, const uint pad) {
+    AsciiString output;
+    transcode(leftJustify(data, pad, '\0'), output);
+    stream.write(cast(ubyte[])output);
 }
 
 /**
