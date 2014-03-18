@@ -270,7 +270,7 @@ public class WAD {
         foreach (Lump lump; this.mLumps) {
             file.write(lump.getOffset());
             file.write(lump.getSize());
-            file.write(cast(ubyte[])leftJustify(lump.getName(), 8, '\0'));
+            writePaddedString(file, lump.getName(), 8);
         }
 
         file.close();
