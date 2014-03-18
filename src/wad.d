@@ -206,7 +206,7 @@ public class WAD {
      * @param fileName
      * The name of the file to read this WAD from.
      */
-    this(string fileName) {
+    this(const string fileName) {
         char[4] id;
 
         BufferedFile file = new BufferedFile(fileName, FileMode.In);
@@ -239,7 +239,7 @@ public class WAD {
      * @param fileName
      * The name of the file to write to. This file will be overwritten if it already exists.
      */
-    public void writeTo(string fileName) {
+    public void writeTo(const string fileName) {
 
         // Calculcate lump offsets inside the WAD file.
         // The directory follows the lump data.
@@ -285,7 +285,7 @@ public class WAD {
      * @returns
      * True if the lump is present, false otherwise.
      */
-    public bool containsLump(string name) {
+    public bool containsLump(const string name) {
         return this.mLumps.contains(name);
     }
 
@@ -316,7 +316,7 @@ public class WAD {
      * @returns
      * The new Lump object.
      */
-    public Lump addLump(string name) {
+    public Lump addLump(const string name) {
         Lump newLump = new Lump(name);
 
         this.mLumps.add(newLump.getName(), newLump);
@@ -339,7 +339,7 @@ public class WAD {
         this.mLumps = new OrderedAA!(string,Lump);
 
         // Create new lumps from the directory data and read their raw data.
-        for (int index; index < this.mLumpCount; index++) {
+        for (size_t index; index < this.mLumpCount; index++) {
             directory.read(offset);
             directory.read(size);
             name = readPaddedString(directory, 8);
@@ -351,7 +351,7 @@ public class WAD {
         }
     }
 
-    public Lump getLump(const int index) {
+    public Lump getLump(const size_t index) {
         if (index >= this.mLumps.length || index < 0) {
             return null;
         }
@@ -359,7 +359,7 @@ public class WAD {
         return this.mLumps[index];
     }
 
-    public Lump getLump(string name) {
+    public Lump getLump(const string name) {
         return this.mLumps.get(name, null);
     }
 

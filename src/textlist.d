@@ -108,7 +108,7 @@ class TextList {
         this.mTextLumps.sort();
     }
 
-    private bool isTextLump(string name) {
+    private bool isTextLump(const string name) {
         return (getArrayIndex(TEXT_LUMPS, name) != -1);
     }
 }

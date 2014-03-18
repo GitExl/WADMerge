@@ -164,7 +164,7 @@ public class TextureList {
         // Create the data for a PNAMES lump.
         MemoryStream pnames = new MemoryStream();
         pnames.write(cast(uint)this.mPatchNames.length);
-        foreach (string patchName; this.mPatchNames) {
+        foreach (const string patchName; this.mPatchNames) {
             writePaddedString(pnames, patchName, 8);
         }
 
@@ -239,12 +239,12 @@ public class TextureList {
         // Allocate room for the amount of textures in the texture lump.
         data.read(textureCount);
         textureOffsets = new int[textureCount];
-        for (int index; index < textureCount; index++) {
+        for (size_t index; index < textureCount; index++) {
             data.read(textureOffsets[index]);
         }
 
         // Read the texture definitions themselves.
-        foreach (uint textureIndex, uint offset; textureOffsets) {
+        foreach (size_t textureIndex, uint offset; textureOffsets) {
             data.seek(offset, SeekPos.Set);
 
             TextureDef texture;
@@ -265,7 +265,7 @@ public class TextureList {
             }
 
             // Read all patch definitions for this texture.
-            for (uint patchIndex; patchIndex < patchCount; patchIndex++) {
+            for (size_t patchIndex; patchIndex < patchCount; patchIndex++) {
                 PatchDef patch;
 
                 data.read(patch.offsetX);
@@ -291,12 +291,12 @@ public class TextureList {
 
         // Read patchnames as NULL padded 8 byte strings.
         this.mPatchNames.length = 0;
-        for (int index = 0; index < count; index++) {
+        for (size_t index = 0; index < count; index++) {
             this.mPatchNames ~= readPaddedString(data, 8).dup;
         }
     }
 
-    private bool texturesAreEqual(TextureDef a, TextureDef b) {
+    private bool texturesAreEqual(const TextureDef a, const TextureDef b) {
         // Compare texture definition properties.
         if (a.name != b.name) { return false; }
         if (a.width != b.width) { return false; }

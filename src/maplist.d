@@ -50,10 +50,10 @@ struct MapMarker {
     MapType type;
 
     // Index of the marker lump for this map.
-    uint lumpIndexStart;
+    size_t lumpIndexStart;
 
     // The number of lumps following the index lump that this map uses.
-    uint lumpIndexEnd;
+    size_t lumpIndexEnd;
 
     // The WAD object that this map and it's lumps can be found in.
     WAD wad;
@@ -85,7 +85,7 @@ class MapList {
         string lumpName;
 
         OrderedAA!(string,Lump) lumps = wad.getLumps();
-        foreach (int index, ref Lump lump; lumps) {
+        foreach (size_t index, ref Lump lump; lumps) {
             lumpName = lump.getName();
 
             if (marker is null) {
@@ -178,7 +178,7 @@ class MapList {
         this.mMapMarkers.update(marker.name, *marker);
     }
 
-    private bool isMapLump(string lumpName) {
+    private bool isMapLump(const string lumpName) {
         return (getArrayIndex(MAP_LUMPS, lumpName) > -1);
     }
 }

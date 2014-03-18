@@ -90,8 +90,8 @@ public void writePaddedString(Stream stream, const string data, const uint pad) 
  * @returns
  * The index of the element in the array, or -1 if the element was not found.
  */
-public int getArrayIndex(T)(T[] array, T find) {
-    foreach (int index, T item; array) {
+public ptrdiff_t getArrayIndex(T)(T[] array, T find) {
+    foreach (ptrdiff_t index, T item; array) {
         if (item == find) {
             return index;
         }

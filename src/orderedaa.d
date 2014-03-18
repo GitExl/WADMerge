@@ -61,7 +61,7 @@ class OrderedAA(K, I) {
      * @returns
      * The index of the item that was added.
      */
-    public int add(K key, I item) {
+    public int add(const K key, I item) {
         this.mItems ~= item;
         this.mKeys[key] = this.mItems.length - 1;
 
@@ -82,7 +82,7 @@ class OrderedAA(K, I) {
      * @returns
      * The index of the item that was added.
      */
-    public int update(K key, I item) {
+    public size_t update(const K key, I item) {
         if (key in this.mKeys) {
             this.mItems[this.mKeys[key]] = item;
             return this.mKeys[key];
@@ -101,7 +101,7 @@ class OrderedAA(K, I) {
 
         // Rebuild the item array in the order of the key list.
         I[] newItems;
-        foreach (int index, K key; keyList) {
+        foreach (size_t index, K key; keyList) {
             newItems ~= this.mItems[this.mKeys[key]];
             this.mKeys[key] = index;
         }
@@ -111,7 +111,7 @@ class OrderedAA(K, I) {
     /**
      * Returns true if an item with the specified key is present in this array.
      */
-    public bool contains(K key) {
+    public bool contains(const K key) {
         return ((key in this.mKeys) !is null);
     }
 
@@ -127,7 +127,7 @@ class OrderedAA(K, I) {
      * @returns
      * The item with the specified key.
      */
-    public I get(K key, I def) {
+    public I get(const K key, I def) {
         if (key in this.mKeys) {
             return this.mItems[this.mKeys[key]];
         } else {
@@ -141,7 +141,7 @@ class OrderedAA(K, I) {
     public void clear() {
         this.mItems.length = 0;
 
-        foreach (K key; this.mKeys.keys) {
+        foreach (const K key; this.mKeys.keys) {
             this.mKeys.remove(key);
         }
     }
@@ -149,14 +149,14 @@ class OrderedAA(K, I) {
     /**
      * Describes the number of items in this array.
      */
-    @property int length() {
+    @property size_t length() {
         return this.mItems.length;
     }
 
     public int opApply(int delegate(ref I) dg) {
         int result;
 
-        for (int index = 0; index < this.mItems.length; index++) {
+        for (size_t index = 0; index < this.mItems.length; index++) {
             result = dg(this.mItems[index]);
             if (result) {
                 break;
@@ -166,10 +166,10 @@ class OrderedAA(K, I) {
         return result;
     }
 
-    public int opApply(int delegate(ref int, ref I) dg) {
+    public int opApply(int delegate(ref size_t, ref I) dg) {
         int result;
 
-        for (int index = 0; index < this.mItems.length; index++) {
+        for (size_t index = 0; index < this.mItems.length; index++) {
             result = dg(index, this.mItems[index]);
             if (result) {
                 break;
@@ -179,11 +179,11 @@ class OrderedAA(K, I) {
         return result;
     }
 
-    public I opIndex(int index) {
+    public I opIndex(const size_t index) {
         return this.mItems[index];
     }
 
-    public I opIndex(K key) {
+    public I opIndex(const K key) {
         return this.mItems[this.mKeys[key]];
     }
 }
