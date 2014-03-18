@@ -1,3 +1,7 @@
+Version 2.2.1 beta
+------------------
+- Fixed: lump, texture and patch names are now correctly interpreted as ASCII strings.
+
 Version 2.2.0 beta
 ------------------
 - Added: merging of ANIMATED and SWITCHES lumps.
