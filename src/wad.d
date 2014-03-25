@@ -50,10 +50,10 @@ public enum WADType : ubyte {
 public final class Lump {
 
     /// The offset of this lump in the containing WAD file.
-    private uint mOffset;
+    private int mOffset;
 
     /// The size of this lump's data, in bytes.
-    private uint mSize;
+    private int mSize;
 
     /// The name of this lump.
     private string mName;
@@ -96,7 +96,7 @@ public final class Lump {
      * size   = The size of the new lump object's data.
      * offset = The byte location where the new lump object's data is stored in a WAD.
      */
-    public this(string name, uint size, uint offset) {
+    public this(string name, int size, int offset) {
         this.mOffset = offset;
         this.mSize = size;
         this.mName = name;
@@ -185,14 +185,14 @@ public final class Lump {
     /**
      * Returns: This lump's data size.
      */
-    public uint getSize() {
+    public int getSize() {
         return this.mSize;
     }
 
     /**
      * Returns: This lump's byte offset.
      */
-    public uint getOffset() {
+    public int getOffset() {
         return this.mOffset;
     }
 
@@ -202,7 +202,7 @@ public final class Lump {
      * Params:
      * offset = the byte offset at which this lump's data is located in a WAD file.
      */
-    public void setOffset(uint offset) {
+    public void setOffset(int offset) {
         this.mOffset = offset;
     }
 
@@ -227,10 +227,10 @@ public final class WAD {
     private WADType mType;
 
     /// The number of lumps in this WAD file.
-    private uint mLumpCount;
+    private int mLumpCount;
 
     /// The offset to the lump directory.
-    private uint mDirectoryOffset;
+    private int mDirectoryOffset;
 
     /// A list of the lumps inside this WAD file.
     private OrderedAA!(string,Lump) mLumps;
