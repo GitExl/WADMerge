@@ -148,32 +148,7 @@ int main(string[] argv) {
         namespaces.readFrom(wad);
     }
 
-    // Create the output WAD.
-    WAD output = new WAD(WADType.PWAD);
-    if (sortLoose == true) {
-        namespaces.sortLoose();
-    }
-    namespaces.addLooseTo(output);
-
-    if (mergeText == true) {
-        if (sortText == true) {
-            textLumps.sort();
-        }
-        textLumps.addTo(output);
-    }
-
-    animated.addTo(output);
-
     textures.updatePatchNames();
-    if (sortTextures == true) {
-        textures.sort();
-    }
-    textures.writeTo(output);
-
-    if (sortMaps == true) {
-        maps.sort();
-    }
-    maps.addTo(output);
 
     // Remove unused patch names.
     if (filterPatches == true) {
@@ -183,11 +158,36 @@ int main(string[] argv) {
         }
     }
 
+    // Sort resources.
+    if (sortLoose == true) {
+        namespaces.sortLoose();
+    }
+    if (mergeText == true && sortText == true) {
+        textLumps.sort();
+    }
+    if (sortTextures == true) {
+        textures.sort();
+    }
+    if (sortMaps == true) {
+        maps.sort();
+    }
     if (sortNamespaces == true) {
         namespaces.sort();
     }
+
+    // Create the output WAD and write resources to it.
+    WAD output = new WAD(WADType.PWAD);
+    
+    namespaces.addLooseTo(output);
+    if (mergeText == true) {
+        textLumps.addTo(output);
+    }
+    animated.addTo(output);
+    textures.writeTo(output);
+    maps.addTo(output);
     namespaces.addTo(output);
 
+    // Write final WAD file.
     writefln("Writing %s...", outputFile);
     output.writeTo(outputFile);
     writefln("Done.");
