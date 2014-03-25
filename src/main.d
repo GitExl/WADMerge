@@ -24,7 +24,6 @@
 */
 
 import std.stdio;
-import std.getopt;
 import std.file;
 import std.string;
 import std.algorithm;
@@ -32,11 +31,9 @@ import std.c.stdlib;
 
 import wad;
 import console;
-import license;
-import help;
 import util;
 import orderedaa;
-
+import options;
 import texturelist;
 import maplist;
 import namespacelist;
@@ -61,41 +58,11 @@ private immutable bool VERSION_BETA = true;
  */
 public int main(string[] argv) {
     writeHeader();
-
-    if (argv.length == 1) {
-        writeHelp();
-    }
-
     console.init();
 
-    // Variables with command line parameters and their default values.
-    string outputFile = "merged.wad";
-    bool overwrite = false;
-    bool filterPatches = true;
-    bool mergeText = true;
-    bool sortNamespaces = true;
-    bool sortMaps = true;
-    bool sortLoose = false;
-    bool sortTextures = false;
-    bool sortText = true;
-
-    // Parse command line parameters.
+    Options opts;
     try {
-        getopt(argv,
-            "license|l",      &writeLicense,
-            "help|h|?",       &writeHelp,
-
-            "output|o",       &outputFile,
-            "overwrite|w",    &overwrite,
-            "filter-patches", &filterPatches,
-            "merge-text",     &mergeText,
-
-            "sort-ns",        &sortNamespaces,
-            "sort-maps",      &sortMaps,
-            "sort-loose",     &sortLoose,
-            "sort-textures",  &sortTextures,
-            "sort-text",      &sortText
-        );
+        opts = options.parse(argv);
     } catch (Exception e) {
         stderr.writeln(e.msg);
         return -1;
@@ -105,14 +72,14 @@ public int main(string[] argv) {
     string[] wadPaths = getInputFiles(argv);
 
     // Determine if the output file is going to be overwritten or not.
-    if (exists(outputFile) == true) {
-        if (overwrite == false) {
-            stderr.writef("The output file %s already exists. Overwrite? (Y/N) ", outputFile);
+    if (exists(opts.outputFile) == true) {
+        if (opts.overwrite == false) {
+            stderr.writef("The output file %s already exists. Overwrite? (Y/N) ", opts.outputFile);
             if (getYesNo() == false) {
                 return 0;
             }
         } else {
-            console.writeLine(Color.INFO, "Overwriting %s.", outputFile);
+            console.writeLine(Color.INFO, "Overwriting %s.", opts.outputFile);
         }
     }
 
@@ -149,7 +116,7 @@ public int main(string[] argv) {
         // Merge in other resource types.
         animated.readFrom(wad);
         maps.readFrom(wad);
-        if (mergeText == true) {
+        if (opts.mergeText == true) {
             textLumps.readFrom(wad);
         }
         namespaces.readFrom(wad);
@@ -158,7 +125,7 @@ public int main(string[] argv) {
     textures.updatePatchNames();
 
     // Remove unused patch names.
-    if (filterPatches == true) {
+    if (opts.filterPatches == true) {
         string[] patchNames = textures.getPatchNames();
         if (patchNames.length > 0) {
             filterNamespace(namespaces.getNamespace("PP"), patchNames);
@@ -167,35 +134,35 @@ public int main(string[] argv) {
 
     // Sort resources.
     console.writeLine(Color.NORMAL, "Sorting...");
-    if (sortLoose == true) {
+    if (opts.sortLoose == true) {
         namespaces.sortLoose();
     }
-    if (mergeText == true && sortText == true) {
+    if (opts.mergeText == true && opts.sortText == true) {
         textLumps.sort();
     }
-    if (sortTextures == true) {
+    if (opts.sortTextures == true) {
         textures.sort();
     }
-    if (sortMaps == true) {
+    if (opts.sortMaps == true) {
         maps.sort();
     }
-    if (sortNamespaces == true) {
+    if (opts.sortNamespaces == true) {
         namespaces.sort();
     }
 
     // Create the output WAD and write resources to it.
-    console.writeLine(Color.NORMAL, "Writing %s...", outputFile);
+    console.writeLine(Color.NORMAL, "Writing %s...", opts.outputFile);
     
     WAD output = new WAD(WADType.PWAD);
     namespaces.addLooseTo(output);
-    if (mergeText == true) {
+    if (opts.mergeText == true) {
         textLumps.addTo(output);
     }
     animated.addTo(output);
     textures.writeTo(output);
     maps.addTo(output);
     namespaces.addTo(output);
-    output.writeTo(outputFile);
+    output.writeTo(opts.outputFile);
 
     console.writeLine(Color.NORMAL, "Done.");
 
@@ -244,22 +211,6 @@ private void writeHeader() {
         console.writeLine(Color.INFO, "This is a beta version, bugs may be present!");
         writeln();
     }
-}
-
-/**
- * Outputs the program's license text.
- */
-private void writeLicense() {
-    writeln(license.LICENSE);
-    exit(0);
-}
-
-/**
- * Outputs the program's help text.
- */
-private void writeHelp() {
-    writeln(help.HELP);
-    exit(0);
 }
 
 /**
