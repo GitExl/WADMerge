@@ -54,6 +54,12 @@ version (Windows) {
         INFO      = ColorBits.FOREGROUND_GREEN | ColorBits.FOREGROUND_INTENSE
     }
 
+    /// A handle to the current console instance.
+    private HANDLE consoleHandle;
+
+    /// Stored console buffer configuration.
+    private CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
+
 } else {
 
     /// Predefined colors.
@@ -62,15 +68,7 @@ version (Windows) {
         IMPORTANT = "\x1b[31;1m",
         INFO      = "\x1b[31;2m"
     }
-
 }
-
-
-/// A handle to the current console instance.
-private HANDLE consoleHandle;
-
-/// Stored console buffer configuration.
-private CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
 
 /**
