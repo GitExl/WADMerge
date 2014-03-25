@@ -84,7 +84,7 @@ public final class Lump {
      */
     public this(string name, ubyte[] data) {
         this.mName = name;
-        this.mSize = data.length;
+        this.mSize = cast(int)data.length;
         this.mData = data;
     }
 
@@ -125,7 +125,7 @@ public final class Lump {
      */
     public void putData(ubyte[] data) {
         this.mData = data;
-        this.mSize = data.length;
+        this.mSize = cast(int)data.length;
     }
 
     /**
@@ -290,7 +290,7 @@ public final class WAD {
 
         // Calculcate lump offsets inside the WAD file.
         // The directory follows the lump data.
-        uint offset = 12;
+        int offset = 12;
         foreach (Lump lump; this.mLumps) {
             lump.setOffset(offset);
             offset += lump.getSize();

@@ -143,7 +143,7 @@ public final class TextureList {
         textures.write(cast(uint)this.mTextures.length);
 
         // Write offsets to the texture definitions in this data.
-        uint offset = 4 + this.mTextures.length * 4;
+        int offset = cast(int)(4 + this.mTextures.length * 4);
         foreach (ref TextureDef texture; this.mTextures) {
             textures.write(offset);
 
@@ -232,7 +232,7 @@ public final class TextureList {
                 // Add patch indices for newly encountered patch names.
                 if (patch.patchName !in patchIndices) {
                     this.mPatchNames ~= patch.patchName;
-                    patchIndices[patch.patchName] = this.mPatchNames.length - 1;
+                    patchIndices[patch.patchName] = cast(uint)(this.mPatchNames.length - 1);
                 }
 
                 // Set the patch index from the indices list.

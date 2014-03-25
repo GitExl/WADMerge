@@ -76,8 +76,8 @@ public final class NamespaceList {
         Namespace* namespace;
         string name;
         string lumpName;
-        uint lumpSize;
-        int nameIndex;
+        int lumpSize;
+        ptrdiff_t nameIndex;
 
         foreach (Lump lump; wad.getLumps()) {
             lumpName = lump.getName();

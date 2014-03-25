@@ -88,7 +88,7 @@ public final class MapList {
         string lumpName;
 
         OrderedAA!(string,Lump) lumps = wad.getLumps();
-        foreach (size_t index, ref Lump lump; lumps) {
+        foreach (int index, ref Lump lump; lumps) {
             lumpName = lump.getName();
 
             if (marker is null) {
@@ -160,7 +160,7 @@ public final class MapList {
         foreach (ref MapMarker map; this.mMapMarkers) {
             lumpList = map.wad.getLumps();
             wad.addLump(map.name);
-            for (uint index = map.lumpIndexStart; index < map.lumpIndexEnd; index++) {
+            for (size_t index = map.lumpIndexStart; index < map.lumpIndexEnd; index++) {
                 wad.addLump(lumpList[index]);
             }
         }

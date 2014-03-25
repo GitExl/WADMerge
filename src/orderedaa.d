@@ -44,7 +44,7 @@ public final class OrderedAA(K, I) {
     private I[] mItems;
 
     /// Keys pointing to item array indices for presence tests and fast lookups.
-    private int[K] mKeys;
+    private size_t[K] mKeys;
 
 
     /**
@@ -58,7 +58,7 @@ public final class OrderedAA(K, I) {
      *
      * Returns: The index of the item that was added.
      */
-    public int add(const K key, I item) {
+    public size_t add(const K key, I item) {
         this.mItems ~= item;
         this.mKeys[key] = this.mItems.length - 1;
 
@@ -150,7 +150,7 @@ public final class OrderedAA(K, I) {
     public int opApply(int delegate(ref I) dg) {
         int result;
 
-        for (size_t index = 0; index < this.mItems.length; index++) {
+        for (int index = 0; index < this.mItems.length; index++) {
             result = dg(this.mItems[index]);
             if (result) {
                 break;
@@ -163,10 +163,10 @@ public final class OrderedAA(K, I) {
     /**
      * foreach iterator for the index and objects in this array.
      */
-    public int opApply(int delegate(ref size_t, ref I) dg) {
+    public int opApply(int delegate(ref int, ref I) dg) {
         int result;
 
-        for (size_t index = 0; index < this.mItems.length; index++) {
+        for (int index = 0; index < this.mItems.length; index++) {
             result = dg(index, this.mItems[index]);
             if (result) {
                 break;
