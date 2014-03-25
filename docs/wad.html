@@ -38,16 +38,16 @@
 </table><br>
 
 </dd>
-<dt><big><a name="Lump.this"></a> this(string <i>name</i>, uint <i>size</i>, uint <i>offset</i>);
+<dt><big><a name="Lump.this"></a> this(string <i>name</i>, int <i>size</i>, int <i>offset</i>);
 </big></dt>
 <dd>Constructor for a lump whose data will be read at a later point.
 <br><br>
 <b>Params:</b><br>
 <table><tr><td>string <i>name</i></td>
 <td>The <i>name</i> for the new lump object.</td></tr>
-<tr><td>uint <i>size</i></td>
+<tr><td>int <i>size</i></td>
 <td>The <i>size</i> of the new lump object's data.</td></tr>
-<tr><td>uint <i>offset</i></td>
+<tr><td>int <i>offset</i></td>
 <td>The byte location where the new lump object's data is stored in a WAD.</td></tr>
 </table><br>
 
@@ -114,24 +114,24 @@ This lump's data.<br><br>
 This lump's name.<br><br>
 
 </dd>
-<dt><big><a name="Lump.getSize"></a>uint <u>getSize</u>();
+<dt><big><a name="Lump.getSize"></a>int <u>getSize</u>();
 </big></dt>
 <dd><b>Returns:</b><br>
 This lump's data size.<br><br>
 
 </dd>
-<dt><big><a name="Lump.getOffset"></a>uint <u>getOffset</u>();
+<dt><big><a name="Lump.getOffset"></a>int <u>getOffset</u>();
 </big></dt>
 <dd><b>Returns:</b><br>
 This lump's byte offset.<br><br>
 
 </dd>
-<dt><big><a name="Lump.setOffset"></a>void <u>setOffset</u>(uint <i>offset</i>);
+<dt><big><a name="Lump.setOffset"></a>void <u>setOffset</u>(int <i>offset</i>);
 </big></dt>
 <dd>Sets this lump's byte <i>offset</i>.
 <br><br>
 <b>Params:</b><br>
-<table><tr><td>uint <i>offset</i></td>
+<table><tr><td>int <i>offset</i></td>
 <td>the byte <i>offset</i> at which this lump's data is located in a WAD file.</td></tr>
 </table><br>
 

@@ -17,7 +17,7 @@ This is built on top of a normal associative array which keeps track of the indi
  For items that are updated, the index is looked up in the associative array if it exists and the item is
  updated in the array, in place. It is added if they key does not exist in the associative array.<br><br>
 
-<dl><dt><big><a name="add"></a>int <u>add</u>(const K <i>key</i>, I <i>item</i>);
+<dl><dt><big><a name="add"></a>size_t <u>add</u>(const K <i>key</i>, I <i>item</i>);
 </big></dt>
 <dd>Adds a new <i>item</i> to this array.
  This function will always <u>add</u> a new <i>item</i>, and will not update any old one by
@@ -89,7 +89,7 @@ The item with the specified <i>key</i>.<br><br>
 <dd>foreach iterator for the obejcts in this array.<br><br>
 
 </dd>
-<dt><big><a name="opApply"></a>int <u>opApply</u>(int delegate(ref size_t, ref I) <i>dg</i>);
+<dt><big><a name="opApply"></a>int <u>opApply</u>(int delegate(ref int, ref I) <i>dg</i>);
 </big></dt>
 <dd>foreach iterator for the index and objects in this array.<br><br>
 
