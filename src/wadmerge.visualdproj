@@ -284,7 +284,7 @@
  </Config>
  <Folder name="wadmerge">
   <File path="animatedlist.d" />
-  <File path="console_win.d" />
+  <File path="console.d" />
   <File path="help.d" />
   <File path="license.d" />
   <File path="main.d" />

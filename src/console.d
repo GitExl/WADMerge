@@ -28,30 +28,84 @@ module console;
 import std.stdio;
 
 
-/// Predefined colors.
-public enum Color : string {
-    NORMAL    = "\x1b[30;7m",
-    IMPORTANT = "\x1b[31;1m",
-    INFO      = "\x1b[31;2m"
+version (Windows) {
+    import core.sys.windows.windows;
+
+    /**
+     * Color bits for character attributes.
+     * See <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682088%28v=vs.85%29.aspx#_win32_character_attributes">MSDN</a> for
+     * more information about these attributes.
+     */  
+    public enum ColorBits : ushort {
+        FOREGROUND_BLUE = 1,
+        FOREGROUND_GREEN = 2,
+        FOREGROUND_RED = 4,
+        FOREGROUND_INTENSE = 8,
+        BACKGROUND_BLUE = 16,
+        BACKGROUND_GREEN = 32,
+        BACKGROUND_RED = 64,
+        BACKGROUND_INTENSE = 128
+    }
+
+    /// Predefined colors.
+    public enum Color : ushort {
+        NORMAL    = 0xFFFF,
+        IMPORTANT = ColorBits.FOREGROUND_RED   | ColorBits.FOREGROUND_INTENSE,
+        INFO      = ColorBits.FOREGROUND_GREEN | ColorBits.FOREGROUND_INTENSE
+    }
+
+} else {
+
+    /// Predefined colors.
+    public enum Color : string {
+        NORMAL    = "\x1b[30;7m",
+        IMPORTANT = "\x1b[31;1m",
+        INFO      = "\x1b[31;2m"
+    }
+
 }
+
+
+/// A handle to the current console instance.
+private HANDLE consoleHandle;
+
+/// Stored console buffer configuration.
+private CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
 
 /**
  * Initializes colored console output.
  */
 public void init() {
+    version (Windows) {
+        consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+        // Store the console buffer configuration for later restoration.
+        GetConsoleScreenBufferInfo(consoleHandle, &bufferInfo);
+    }
 }
 
 /**
  * Writes a colored line to the console.
  *
  * Params:
- * color = The color character attributes to write the line with.
- * fmt   = The D format() format string to use.
- * args  = Input arguments for the format string.
+ * color   = The color character attributes to write the line with.
+ * fmt     = The D format() format string to use.
+ * args    = Input arguments for the format string.
  */
-public void writeLine(Ushort, Char, A...)(in string color, in Char[] fmt, A args) {
-    write(color);
-    writefln(fmt, args);
-    write("\x1b[0m");
+public void writeLine(Ushort, Char, A...)(in Ushort color, in Char[] fmt, A args) {
+    version (Windows) {
+        if (color != 0xFFFF) {
+            SetConsoleTextAttribute(consoleHandle, color);
+        }
+        writefln(fmt, args);
+        if (color != 0xFFFF) {
+            SetConsoleTextAttribute(consoleHandle, bufferInfo.wAttributes);
+        }
+
+    } else {
+        write(color);
+        writefln(fmt, args);
+        write("\x1b[0m");
+    }
 }
