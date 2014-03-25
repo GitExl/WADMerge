@@ -166,6 +166,7 @@ public int main(string[] argv) {
     }
 
     // Sort resources.
+    console.writeLine(Color.NORMAL, "Sorting...");
     if (sortLoose == true) {
         namespaces.sortLoose();
     }
@@ -183,8 +184,9 @@ public int main(string[] argv) {
     }
 
     // Create the output WAD and write resources to it.
-    WAD output = new WAD(WADType.PWAD);
+    console.writeLine(Color.NORMAL, "Writing %s...", outputFile);
     
+    WAD output = new WAD(WADType.PWAD);
     namespaces.addLooseTo(output);
     if (mergeText == true) {
         textLumps.addTo(output);
@@ -193,11 +195,9 @@ public int main(string[] argv) {
     textures.writeTo(output);
     maps.addTo(output);
     namespaces.addTo(output);
-
-    // Write final WAD file.
-    writefln("Writing %s...", outputFile);
     output.writeTo(outputFile);
-    writefln("Done.");
+
+    console.writeLine(Color.NORMAL, "Done.");
 
     return 0;
 }
