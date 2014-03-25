@@ -28,8 +28,8 @@ module console;
 import std.stdio;
 
 
-// Predefined colors.
-enum Color : string {
+/// Predefined colors.
+public enum Color : string {
     NORMAL    = "\x1b[30;7m",
     IMPORTANT = "\x1b[31;1m",
     INFO      = "\x1b[31;2m"
@@ -45,14 +45,10 @@ public void init() {
 /**
  * Writes a colored line to the console.
  *
- * @param color
- * The color character attributes to write the line with.
- *
- * @param fmt
- * The D format() format string to use.
- *
- * @param args...
- * Input arguments for the format string.
+ * Params:
+ * color = The color character attributes to write the line with.
+ * fmt   = The D format() format string to use.
+ * args  = Input arguments for the format string.
  */
 public void writeLine(Ushort, Char, A...)(in string color, in Char[] fmt, A args) {
     write(color);

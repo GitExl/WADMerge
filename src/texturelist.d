@@ -34,19 +34,39 @@ import console;
 import orderedaa;
 
 
-// A patch that is part of a texture definition.
-public struct PatchDef {
+/**
+ * A patch that is part of a texture definition.
+ * All the patches in a texture are combined by the Doom engine into a single texture image when needed.
+ */
+private struct PatchDef {
+    /// The name of this patch as it is stored in PNAMES.
     string patchName;
+
+    /// The index of this patch in the PNAMES list.
     short patchIndex;
+
+    /// The X offset at which this patch is placed on the texture image.
     short offsetX;
+
+    /// The Y offset at which this patch is placed on the texture image.
     short offsetY;
 }
 
-// A texture definition.
-public struct TextureDef {
+/**
+ * A texture definition.
+ * Textures define an area into which patches are drawn.
+ */
+private struct TextureDef {
+    /// The name of this texture.
     string name;
+
+    // The width of this texture.
     short width;
+
+    // The height of this texture.
     short height;
+
+    // The patches that make up this texture's image.
     PatchDef[] patches;
 }
 
@@ -57,16 +77,16 @@ public struct TextureDef {
  * See http://doomwiki.org/wiki/TEXTURE1_and_TEXTURE2 and http://doomwiki.org/wiki/PNAMES for more
  * details about these lumps.
  */
-public class TextureList {
+public final class TextureList {
 
-    // List of texture definitions.
+    /// The list of texture definitions.
     private OrderedAA!(string,TextureDef) mTextures;
 
-    // Patch names, by index.
+    /// All patch names, by index.
     private string[] mPatchNames;
 
-    // If true, the textures that were last read from a WAD file were in Strife 1.1 format.
-    // If true, when textures are written to a WAD file, the Strife 1.1 format will be used.
+    /// If true, the textures that were last read from a WAD file were in Strife 1.1 format.
+    /// If true, when textures are written to a WAD file, the Strife 1.1 format will be used.
     private bool mStrifeMode;
 
 
@@ -78,8 +98,8 @@ public class TextureList {
      * Adds textures and patch names from a WAD file.
      * This will read the WAD's PNAMES and TEXTURE lumps.
      *
-     * @param wad
-     * The WAD file to read the texture information from.
+     * Params:
+     * wad = The WAD file to read the texture information from.
      */
     public void readFrom(WAD wad) {
         if (wad.containsLump("PNAMES") == false) {
@@ -110,8 +130,8 @@ public class TextureList {
     /**
      * Writes a PNAMES and TEXTURE1 lump containing this list's textures to a WAD file.
      *
-     * @param wad
-     * The WAD file to write the textures and patch names to.
+     * Params:
+     * wad = The WAD file to write the textures and patch names to.
      */
     public void writeTo(WAD wad) {
         if (this.mTextures.length == 0) {
@@ -177,8 +197,8 @@ public class TextureList {
      * Merges the textures in this list with the textures from another list.
      * Texture names that already exist are overwritten if the other texture definition differs.
      *
-     * @param otherList
-     * The other TextureList object to merge with this one.
+     * Params:
+     * otherList = The other TextureList object to merge with this one.
      */
     public void mergeWith(TextureList otherList) {
         foreach (ref TextureDef otherTexture; otherList.getTextures()) {
@@ -226,6 +246,13 @@ public class TextureList {
      */
     public void sort() {
         this.mTextures.sort();
+    }
+
+    /**
+     * Returns: The textures defined in this list.
+     */
+    protected OrderedAA!(string,TextureDef) getTextures() {
+        return this.mTextures;
     }
 
     private void readTextures(MemoryStream data) {
@@ -312,19 +339,26 @@ public class TextureList {
 
         return true;
     }
-
-    public OrderedAA!(string,TextureDef) getTextures() {
-        return this.mTextures;
-    }
     
+    /**
+     * Enables Strife mode for this texture list. When set to true, Strife format TEXTURE lumps will be written
+     * by this list.
+     */
     public void setStrifeMode(bool strifeMode) {
         this.mStrifeMode = strifeMode;
     }
 
+    /**
+     * Returns: true if this texture list was read froma Strife mode TEXTURE lump, or was set as
+     * Strife mode previously.
+     */
     public bool getStrifeMode() {
         return this.mStrifeMode;
     }
 
+    /**
+     * Returns: A list of patch names known to this list.
+     */
     public string[] getPatchNames() {
         return this.mPatchNames;
     }

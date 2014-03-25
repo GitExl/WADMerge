@@ -34,14 +34,11 @@ import std.encoding;
 /**
  * Reads an ASCII string from a Stream object that is padded with null characters.
  *
- * @param stream
- * The Stream object to read the string from.
+ * Params:
+ * stream = The Stream object to read the string from.
+ * pad    = The amount of characters that the string is padded with.
  *
- * @param pad
- * The amount of characters that the string is padded with.
- *
- * @returns
- * A non-padded string that was read from the stream.
+ * Returns: A non-padded string that was read from the stream.
  */
 public string readPaddedString(Stream stream, const uint pad) {
     uint length;
@@ -54,7 +51,6 @@ public string readPaddedString(Stream stream, const uint pad) {
         }
     }
 
-    //return cast(string)padName[0..length].dup;
     string output;
     transcode(cast(AsciiString)padName[0..length], output);
     return output;
@@ -63,14 +59,10 @@ public string readPaddedString(Stream stream, const uint pad) {
 /**
  * Writes a null-padded ASCII string to a stream object.
  *
- * @param stream
- * The Stream object to write the string to.
- *
- * @param data
- * The data to write to the stream.
- *
- * @param pad
- * How many bytes to pad the string to using null characters.
+ * Params: 
+ * stream = The Stream object to write the string to.
+ * data   = The data to write to the stream.
+ * pad    = How many bytes to pad the string to using null characters.
  */
 public void writePaddedString(Stream stream, const string data, const uint pad) {
     AsciiString output;
@@ -81,14 +73,11 @@ public void writePaddedString(Stream stream, const string data, const uint pad) 
 /**
  * Returns the index of an element in an array.
  *
- * @param array
- * The array to search.
+ * Params:
+ * array = The array to search.
+ * find = The element to find.
  *
- * @param find
- * The element to find.
- *
- * @returns
- * The index of the element in the array, or -1 if the element was not found.
+ * Returns: The index of the element in the array, or -1 if the element was not found.
  */
 public ptrdiff_t getArrayIndex(T)(T[] array, T find) {
     foreach (ptrdiff_t index, T item; array) {

@@ -35,31 +35,46 @@ import console;
 immutable ubyte[] NULL_STRING = cast(immutable ubyte[])"\0\0\0\0\0\0\0\0\0";
 
 
-// An animated texture definition.
+/**
+ * An animated texture definition.
+ * Animated textures cycle through textures in the order they are stored in the TEXTURE lumps.
+ */
 struct AnimateDef {
+    /// Type of this animation. 0 for textures, 1 for flats.
     ubyte type;
+
+    /// The last and first texture name in this animation list to cycle inbetween.
     string textureLast;
     string textureFirst;
+
+    /// The speed at which the texture changes, in tics.
     uint speed;
 }
 
-// A switch texture definition.
+/**
+ * A switch texture definition.
+ * Switch textures have an on and off texture.
+ */
 struct SwitchesDef {
+    /// The texture names to be used for the switch states.
     string textureOff;
     string textureOn;
+
+    /// Defines the IWAD the the switch textures are a part of.
+    /// 1 for shareware IWADs, 2 for shareware Doom, 3 for shareware, Doom or Doom II.
     ushort iwad;
 }
 
 
-/*
+/**
  * Holds a list of Boom style texture animations and switch texture definitions.
  *
  * See http://doomwiki.org/wiki/ANIMATED and http://doomwiki.org/wiki/SWITCHES for more
  * information about these lumps and their format.
  */
-class AnimatedList {
+public final class AnimatedList {
 
-    // Animations and switches present in this list.
+    /// The animations and switches present in this list.
     private AnimateDef[] mAnimations;
     private SwitchesDef[] mSwitches;
 
@@ -67,8 +82,8 @@ class AnimatedList {
     /**
      * Reads animated textures and switch textures from a WAD file.
      *
-     * @param wad
-     * The WAD file to read animations and switches from.
+     * Params:
+     * wad = The WAD file to read animations and switches from.
      */
     public void readFrom(WAD wad) {
         Lump animated = wad.getLump("ANIMATED");
@@ -88,8 +103,8 @@ class AnimatedList {
      * Writes an ANIMATED and SWITCHES lump containing the animations and switches in this list
      * to a WAD file.
      *
-     * @param wad
-     * The WAD file to add the lumps to.
+     * Params:
+     * wad = The WAD file to add the lumps to.
      */
     public void addTo(WAD wad) {
         if (this.mAnimations.length > 0) {
@@ -109,7 +124,7 @@ class AnimatedList {
             animated.write(anim.speed);
         }
 
-        // Write terminator entry.
+        // Write the terminating entry.
         animated.write(cast(ubyte)0xFF);
         animated.write(NULL_STRING);
         animated.write(NULL_STRING);
@@ -126,7 +141,7 @@ class AnimatedList {
             switches.write(sw.iwad);
         }
 
-        // Write terminator entry.
+        // Write the terminating entry.
         switches.write(NULL_STRING);
         switches.write(NULL_STRING);
         switches.write(cast(ushort)0);

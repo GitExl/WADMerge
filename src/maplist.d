@@ -34,28 +34,31 @@ import maplumps;
 import util;
 
 
-// Recognized map types.
-enum MapType {
+/// Recognized map types.
+private enum MapType {
     DOOM,
     HEXEN,
     UDMF
 }
 
-// A map marker describing details about a single map marker lump.
-struct MapMarker {
-    // Map name.
+/**
+ * A map marker describing details about a single map marker lump.
+ * These contain all the information needed to copy one map from one WAD to another.
+ */
+private struct MapMarker {
+    /// The lump name of this map.
     string name;
 
-    // Map type.
+    /// The type of this map.
     MapType type;
 
-    // Index of the marker lump for this map.
+    /// The index of the marker lump for this map, in the WAD that contains it.
     size_t lumpIndexStart;
 
-    // The number of lumps following the index lump that this map uses.
+    /// The number of lumps following the index lump that this map uses.
     size_t lumpIndexEnd;
 
-    // The WAD object that this map and it's lumps can be found in.
+    /// The WAD object that this map and it's lumps can be found in.
     WAD wad;
 }
 
@@ -64,10 +67,10 @@ struct MapMarker {
  * Holds a list of map lump markers and how many lumps they contain. It is used to marge multiple
  * maps from WAD files together. Aside from Doom map types, Hexen and UDMF maps are supported.
  */
-class MapList {
+public final class MapList {
 
-    // The map markers in this list of maps.
-    OrderedAA!(string,MapMarker) mMapMarkers;
+    /// The map markers in this list of maps.
+    private OrderedAA!(string,MapMarker) mMapMarkers;
 
 
     this() {
@@ -77,8 +80,8 @@ class MapList {
     /**
      * Adds map markers from a WAD file.
      *
-     * @param wad
-     * The WAD file to add map markers from.
+     * Params:
+     * wad = The WAD file to add map markers from.
      */
     public void readFrom(WAD wad) {
         MapMarker* marker;
@@ -148,8 +151,8 @@ class MapList {
     /**
      * Adds the maps in this list and their lumps to a WAD file.
      *
-     * @param wad
-     * The WAD file to add the lumps to.
+     * Params:
+     * wad = The WAD file to add the lumps to.
      */
     public void addTo(WAD wad) {
         OrderedAA!(string,Lump) lumpList;

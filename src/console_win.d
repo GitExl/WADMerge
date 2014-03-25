@@ -29,9 +29,12 @@ import std.stdio;
 import core.sys.windows.windows;
 
 
-// Color bits for character attributes.
-// See http://msdn.microsoft.com/en-us/library/windows/desktop/ms682088%28v=vs.85%29.aspx#_win32_character_attributes
-enum ColorBits : ushort {
+/**
+ * Color bits for character attributes.
+ * See <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682088%28v=vs.85%29.aspx#_win32_character_attributes">MSDN</a> for
+ * more information about these attributes.
+ */  
+public enum ColorBits : ushort {
     FOREGROUND_BLUE = 1,
     FOREGROUND_GREEN = 2,
     FOREGROUND_RED = 4,
@@ -42,18 +45,18 @@ enum ColorBits : ushort {
     BACKGROUND_INTENSE = 128
 }
 
-// Predefined color bit combinations.
-enum Color : ushort {
+/// Predefined color bit combinations.
+public enum Color : ushort {
     NORMAL    = 0xFFFF,
     IMPORTANT = ColorBits.FOREGROUND_RED   | ColorBits.FOREGROUND_INTENSE,
     INFO      = ColorBits.FOREGROUND_GREEN | ColorBits.FOREGROUND_INTENSE
 }
 
 
-// A handle to the current console instance.
+/// A handle to the current console instance.
 private HANDLE consoleHandle;
 
-// Stored console buffer configuration.
+/// Stored console buffer configuration.
 private CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
 
@@ -70,14 +73,10 @@ public void init() {
 /**
  * Writes a colored line to the console.
  *
- * @param color
- * The color character attributes to write the line with.
- *
- * @param fmt
- * The D format() format string to use.
- *
- * @param args...
- * Input arguments for the format string.
+ * Params:
+ * color   = The color character attributes to write the line with.
+ * fmt     = The D format() format string to use.
+ * args    = Input arguments for the format string.
  */
 public void writeLine(Ushort, Char, A...)(in Ushort color, in Char[] fmt, A args) {
     if (color != 0xFFFF) {

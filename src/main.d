@@ -44,15 +44,22 @@ import textlist;
 import animatedlist;
 
 
-// Version information.
-immutable string NAME = "WADMerge";
-immutable ubyte VERSION_MAJOR = 2;
-immutable ubyte VERSION_MINOR = 2;
-immutable ubyte VERSION_PATCH = 1;
-immutable bool VERSION_BETA = true;
+/// Full program name.
+private immutable string NAME = "WADMerge";
+
+/// Program version information.
+private immutable ubyte VERSION_MAJOR = 2;
+private immutable ubyte VERSION_MINOR = 2;
+private immutable ubyte VERSION_PATCH = 1;
+
+/// If true, this program is marked as a beta version.
+private immutable bool VERSION_BETA = true;
 
 
-int main(string[] argv) {
+/**
+ * Main entry point.
+ */
+public int main(string[] argv) {
     writeHeader();
 
     if (argv.length == 1) {
@@ -61,7 +68,7 @@ int main(string[] argv) {
 
     console.init();
 
-    // Command line parameter variables and their default values.
+    // Variables with command line parameters and their default values.
     string outputFile = "merged.wad";
     bool overwrite = false;
     bool filterPatches = true;
@@ -198,11 +205,9 @@ int main(string[] argv) {
 /**
  * Filters a namespace's lumps so that only those from a list of lump names appear in it.
  *
- * @param namespace
- * The namespace of which the lumps are filtered.
- *
- * @param lumpName
- * A string array of lump names that will be included in the filtered namespace lump list.
+ * Params:
+ * namespace = The namespace of which the lumps are filtered.
+ * lumpName  = A string array of lump names that will be included in the filtered namespace lump list.
  */
 private void filterNamespace(ref Namespace namespace, string[] lumpNames) {
     string lumpName;
@@ -260,8 +265,8 @@ private void writeHelp() {
 /**
  * Validate all pathnames for existence.
  *
- * @param paths
- * The paths to validate as an array of strings.
+ * Params:
+ * paths = The paths to validate as an array of strings.
  */
 private void validateInputFiles(string[] paths) {
     bool error = false;
@@ -282,11 +287,10 @@ private void validateInputFiles(string[] paths) {
 /**
  * Gets a list of WAD file paths from the commandline arguments.
  *
- * @param args
- * The commandline arguments passed into this program.
+ * Params:
+ * args = The commandline arguments passed into this program.
  *
- * @returns
- * An array of validated file paths.
+ * Returns: An array of validated file paths.
  */
 private string[] getInputFiles(string[] args) {
     if (args.length == 1) {
@@ -307,7 +311,7 @@ private string[] getInputFiles(string[] args) {
 }
 
 /**
- * Returns true if the user enters Y as input, false for all other input.
+ * Returns: true if the user enters Y as input, false for all other input.
  */
 private bool getYesNo() {
     string answer;

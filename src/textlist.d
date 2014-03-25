@@ -32,19 +32,20 @@ import wad;
 import console;
 
 
-// A text lump and it's contents.
-struct TextLump {
+/// A text lump and it's contents.
+private struct TextLump {
     string name;
     ubyte[] contents;
 }
 
 
 /**
- * A text list contains all text lumps found in a WAD file. It concatenates existing ones when added.
+ * A text list contains all text lumps found in a WAD file. It concatenates existing ones when they are added.
+ * No regard is taken for text file encoding, they are simply treated as arrays of bytes.
  */
-class TextList {
+public final class TextList {
 
-    // The text lumps in this list.
+    /// The text lumps in this list.
     private OrderedAA!(string,TextLump*) mTextLumps;
 
 
@@ -56,8 +57,8 @@ class TextList {
      * Adds text lumps found in a WAD file to this list. If a text lump already exists, it will be
      * extended with the text of the new lump.
      *
-     * @param wad
-     * The WAD file to add text lumps from.
+     * Params:
+     * wad = The WAD file to add text lumps from.
      */
     public void readFrom(WAD wad) {
         string lumpName;
@@ -92,8 +93,8 @@ class TextList {
     /**
      * Adds the text lumps from this list to a WAD file.
      *
-     * @param wad
-     * The WAD file to add the text lumps to.
+     * Params:
+     * wad = The WAD file to add the text lumps to.
      */
     public void addTo(WAD wad) {
         foreach (TextLump* text; this.mTextLumps) {

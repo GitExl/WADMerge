@@ -29,7 +29,7 @@ import std.algorithm;
 
 
 /**
- * Simplistic implementation of an ordered associative array.
+ * A simplistic implementation of an ordered associative array.
  *
  * This is built on top of a normal associative array which keeps track of the indices into a regular array.
  * Items that are added are always appended to the array, and it's index added (or updated) in
@@ -38,12 +38,12 @@ import std.algorithm;
  * For items that are updated, the index is looked up in the associative array if it exists and the item is
  * updated in the array, in place. It is added if they key does not exist in the associative array.
  */
-class OrderedAA(K, I) {
+public final class OrderedAA(K, I) {
 
-    // The items in this array, in the order that they were added.
+    /// The items in this array, in the order that they were added.
     private I[] mItems;
 
-    // Keys pointing to item array indices for presence tests and fast lookups.
+    /// Keys pointing to item array indices for presence tests and fast lookups.
     private int[K] mKeys;
 
 
@@ -52,14 +52,11 @@ class OrderedAA(K, I) {
      * This function will always add a new item, and will not update any old one by
      * the same key if present.
      *
-     * @param key
-     * They key to add.
+     * Params: 
+     * key  = They key to add.
+     * item = They item to add.
      *
-     * @param item
-     * They item to add.
-     *
-     * @returns
-     * The index of the item that was added.
+     * Returns: The index of the item that was added.
      */
     public int add(const K key, I item) {
         this.mItems ~= item;
@@ -73,14 +70,11 @@ class OrderedAA(K, I) {
      * This function will replace an already existing item if present, otherwise it
      * will add it to the end of the array.
      *
-     * @param key
-     * They key to update.
+     * Params:
+     * key  = They key to update.
+     * item = They item to update.
      *
-     * @param item
-     * They item to update.
-     *
-     * @returns
-     * The index of the item that was added.
+     * Returns: The index of the item that was added.
      */
     public size_t update(const K key, I item) {
         if (key in this.mKeys) {
@@ -109,7 +103,7 @@ class OrderedAA(K, I) {
     }
 
     /**
-     * Returns true if an item with the specified key is present in this array.
+     * Returns: true if an item with the specified key is present in this array.
      */
     public bool contains(const K key) {
         return ((key in this.mKeys) !is null);
@@ -118,14 +112,11 @@ class OrderedAA(K, I) {
     /**
      * Returns an item from this array, or a default value if the item does not exist.
      *
-     * @param key
-     * They key of the item to return.
+     * Params: 
+     * key = They key of the item to return.
+     * def = They default value to return if the key is not present in this array.
      *
-     * @param def
-     * They default value to return if the key is not present in this array.
-     *
-     * @returns
-     * The item with the specified key.
+     * Returns: The item with the specified key.
      */
     public I get(const K key, I def) {
         if (key in this.mKeys) {
@@ -153,6 +144,9 @@ class OrderedAA(K, I) {
         return this.mItems.length;
     }
 
+    /**
+     * foreach iterator for the obejcts in this array.
+     */
     public int opApply(int delegate(ref I) dg) {
         int result;
 
@@ -166,6 +160,9 @@ class OrderedAA(K, I) {
         return result;
     }
 
+    /**
+     * foreach iterator for the index and objects in this array.
+     */
     public int opApply(int delegate(ref size_t, ref I) dg) {
         int result;
 
@@ -179,10 +176,16 @@ class OrderedAA(K, I) {
         return result;
     }
 
+    /**
+     * Index function for an integer value.
+     */
     public I opIndex(const size_t index) {
         return this.mItems[index];
     }
 
+    /**
+     * Index function for a key.
+     */
     public I opIndex(const K key) {
         return this.mItems[this.mKeys[key]];
     }

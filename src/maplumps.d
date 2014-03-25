@@ -26,8 +26,8 @@
 module maplumps;
 
 
-// A list of lump names that are part of known maps.
-string[] MAP_LUMPS = [
+/// A list of lump names that are known to be part of maps.
+public string[] MAP_LUMPS = [
     "THINGS",
     "VERTEXES",
     "SIDEDEFS",

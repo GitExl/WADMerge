@@ -33,13 +33,16 @@ import console;
 import orderedaa;
 
 
-// A namespace groups lumps by their type.
-struct Namespace {
+/**
+ * A namespace groups a number of lumps by their type.
+ */
+public struct Namespace {
 
-    // The name of this namespace. SS, FF, PP, etc.
+    /// The name of this namespace. Names can be anything but most engines only recognize a few standard ones like
+    /// SS, FF, or PP.
     string name;
 
-    // The list of lumps contained in this namespace.
+    /// The list of lumps contained in this namespace.
     OrderedAA!(string,Lump) lumps;
 }
 
@@ -47,15 +50,15 @@ struct Namespace {
 /**
  * Holds a list of namespaces and the lumps contained in them.
  *
- * A namespace is marked by a start lump, such as SS_START and an end lump like SS_END. All
- * lumps inbetween these two markers will become part of the namespace called "SS".
+ * A namespace is marked by a start lump, such as SS_START and an end lump like S_END. All
+ * lumps inbetween these two markers will in this example become part of the namespace called "SS".
  */
-class NamespaceList {
+public final class NamespaceList {
 
-    // The namespaces in this namespace list.
+    /// The namespaces in this namespace list.
     private Namespace[string] mNamespaces;
 
-    // Loose lump namespace.
+    /// Loose lump namespace.
     private Namespace mLoose;
 
 
@@ -66,8 +69,8 @@ class NamespaceList {
     /**
      * Adds namespaces and their lumps from a WAD's contents.
      *
-     * @param wad
-     * The WAD file to add namespaces from.
+     * Params:
+     * wad = The WAD file to add namespaces from.
      */
     public void readFrom(WAD wad) {
         Namespace* namespace;
@@ -151,8 +154,8 @@ class NamespaceList {
      * Adds the namespaces in this list to a WAD file.
      * Does not process the loose lump namespace.
      *
-     * @param wad
-     * The WAD file to add the namespaces to.
+     * Params:
+     * wad = The WAD file to add the namespaces to.
      */
     public void addTo(WAD wad) {
         foreach (ref Namespace namespace; this.mNamespaces) {
@@ -179,8 +182,8 @@ class NamespaceList {
     /**
      * Adds the lumps from the loose lump namespace to a WAD file.
      *
-     * @param wad
-     * The WAD file to add the loose lumps to.
+     * Params:
+     * wad = The WAD file to add the loose lumps to.
      */
     public void addLooseTo(WAD wad) {
         if (this.mLoose.lumps.length == 0) {
@@ -208,6 +211,9 @@ class NamespaceList {
         this.mLoose.lumps.sort();
     }
 
+    /**
+     * Returns: The namespaces that are contained in this list.
+     */
     public ref Namespace getNamespace(string name) {
         return this.mNamespaces[name];
     }
