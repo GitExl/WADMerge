@@ -63,11 +63,17 @@ version (Windows) {
 } else {
 
     /// Predefined colors.
-    public enum Color : string {
-        NORMAL    = "\x1b[30;7m",
-        IMPORTANT = "\x1b[31;1m",
-        INFO      = "\x1b[31;2m"
+    public enum Color : ushort {
+        NORMAL,
+        IMPORTANT,
+        INFO
     }
+
+    private string[] COLOR_CODES = [
+        "\x1b[30;7m",
+        "\x1b[31;1m",
+        "\x1b[31;2m"
+    ];
 }
 
 
@@ -102,7 +108,7 @@ public void writeLine(Ushort, Char, A...)(in Ushort color, in Char[] fmt, A args
         }
 
     } else {
-        write(color);
+        write(COLOR_CODES[color]);
         writefln(fmt, args);
         write("\x1b[0m");
     }
