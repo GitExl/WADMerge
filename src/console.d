@@ -110,6 +110,6 @@ public void writeLine(Ushort, Char, A...)(in Ushort color, in Char[] fmt, A args
     } else {
         write(COLOR_CODES[color]);
         writefln(fmt, args);
-        write("\x1b[39;49m");
+        write("\x1b[0m");
     }
 }
