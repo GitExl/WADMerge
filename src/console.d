@@ -64,15 +64,15 @@ version (Windows) {
 
     /// Predefined colors.
     public enum Color : ushort {
-        NORMAL,
+        NORMAL = 0,
         IMPORTANT,
         INFO
     }
 
     private string[] COLOR_CODES = [
-        "\x1b[30;7m",
+        "\x1b[37;0m",
         "\x1b[31;1m",
-        "\x1b[31;2m"
+        "\x1b[32;1m"
     ];
 }
 
@@ -110,6 +110,6 @@ public void writeLine(Ushort, Char, A...)(in Ushort color, in Char[] fmt, A args
     } else {
         write(COLOR_CODES[color]);
         writefln(fmt, args);
-        write("\x1b[0m");
+        write("\x1b[39;49m");
     }
 }
