@@ -289,7 +289,6 @@
   <File path="license.d" />
   <File path="main.d" />
   <File path="maplist.d" />
-  <File path="maplumps.d" />
   <File path="namespacelist.d" />
   <File path="options.d" />
   <File path="orderedaa.d" />

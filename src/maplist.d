@@ -30,9 +30,24 @@ import std.stdio;
 import wad;
 import console;
 import orderedaa;
-import maplumps;
 import util;
 
+
+/// A list of lump names that are known to be part of maps.
+private string[] MAP_LUMPS = [
+    "THINGS",
+    "VERTEXES",
+    "SIDEDEFS",
+    "SECTORS",
+    "SEGS",
+    "SSECTORS",
+    "NODES",
+    "LINEDEFS",
+    "REJECT",
+    "BLOCKMAP",
+    "BEHAVIOR",
+    "SCRIPTS",
+];
 
 /// Recognized map types.
 private enum MapType {
