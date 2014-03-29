@@ -32,7 +32,7 @@ import util;
 import console;
 
 
-immutable ubyte[] NULL_STRING = cast(immutable ubyte[])"\0\0\0\0\0\0\0\0\0";
+immutable ubyte[9] NULL_BYTES9;
 
 
 /**
@@ -126,8 +126,8 @@ public final class AnimatedList {
 
         // Write the terminating entry.
         animated.write(cast(ubyte)0xFF);
-        animated.write(NULL_STRING);
-        animated.write(NULL_STRING);
+        animated.write(NULL_BYTES9);
+        animated.write(NULL_BYTES9);
         animated.write(cast(uint)0);
 
         wad.addLump(new Lump("ANIMATED", animated.data()));
@@ -142,8 +142,8 @@ public final class AnimatedList {
         }
 
         // Write the terminating entry.
-        switches.write(NULL_STRING);
-        switches.write(NULL_STRING);
+        switches.write(NULL_BYTES9);
+        switches.write(NULL_BYTES9);
         switches.write(cast(ushort)0);
 
         wad.addLump(new Lump("SWITCHES", switches.data()));
