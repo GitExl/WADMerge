@@ -17,7 +17,12 @@ This is built on top of a normal associative array which keeps track of the indi
  For items that are updated, the index is looked up in the associative array if it exists and the item is
  updated in the array, in place. It is added if they key does not exist in the associative array.<br><br>
 
-<dl><dt><big><a name="add"></a>size_t <u>add</u>(const K <i>key</i>, I <i>item</i>);
+<dl><dt><big><a name="OrderedAA.Comparator"></a>alias <u>Comparator</u> = bool delegate(K, K);
+</big></dt>
+<dd>The delegate declaration for the sorting comparison function.<br><br>
+
+</dd>
+<dt><big><a name="OrderedAA.add"></a>size_t <u>add</u>(const K <i>key</i>, I <i>item</i>);
 </big></dt>
 <dd>Adds a new <i>item</i> to this array.
  This function will always <u>add</u> a new <i>item</i>, and will not update any old one by
@@ -33,7 +38,7 @@ This is built on top of a normal associative array which keeps track of the indi
 The index of the <i>item</i> that was added.<br><br>
 
 </dd>
-<dt><big><a name="update"></a>size_t <u>update</u>(const K <i>key</i>, I <i>item</i>);
+<dt><big><a name="OrderedAA.update"></a>size_t <u>update</u>(const K <i>key</i>, I <i>item</i>);
 </big></dt>
 <dd>Updates an <i>item</i> in this array.
  This function will replace an already existing <i>item</i> if present, otherwise it
@@ -49,18 +54,29 @@ The index of the <i>item</i> that was added.<br><br>
 The index of the <i>item</i> that was added.<br><br>
 
 </dd>
-<dt><big><a name="sort"></a>void <u>sort</u>();
+<dt><big><a name="OrderedAA.sort"></a>void <u>sort</u>();
 </big></dt>
-<dd>Sorts the items in this array by their key.<br><br>
+<dd>Sorts the items in this array by their keys.<br><br>
 
 </dd>
-<dt><big><a name="contains"></a>bool <u>contains</u>(const K <i>key</i>);
+<dt><big><a name="OrderedAA.sort"></a>void <u>sort</u>(Comparator <i>comp</i>);
+</big></dt>
+<dd>Sorts the items in this array by their keys.
+ A comparator delegate can be passed in that will handle the sorting comparisons.
+<br><br>
+<b>Params:</b><br>
+<table><tr><td>Comparator <i>comp</i></td>
+<td>the comparator delegate. See OrderedAA.Comparator.</td></tr>
+</table><br>
+
+</dd>
+<dt><big><a name="OrderedAA.contains"></a>bool <u>contains</u>(const K <i>key</i>);
 </big></dt>
 <dd><b>Returns:</b><br>
 <b>true</b> if an item with the specified <i>key</i> is present in this array.<br><br>
 
 </dd>
-<dt><big><a name="get"></a>I <u>get</u>(const K <i>key</i>, I <i>def</i>);
+<dt><big><a name="OrderedAA.get"></a>I <u>get</u>(const K <i>key</i>, I <i>def</i>);
 </big></dt>
 <dd>Returns an item from this array, or a default value if the item does not exist.
 <br><br>
@@ -74,32 +90,32 @@ The index of the <i>item</i> that was added.<br><br>
 The item with the specified <i>key</i>.<br><br>
 
 </dd>
-<dt><big><a name="clear"></a>void <u>clear</u>();
+<dt><big><a name="OrderedAA.clear"></a>void <u>clear</u>();
 </big></dt>
 <dd>Empties the contents of this array.<br><br>
 
 </dd>
-<dt><big><a name="length"></a>size_t <u>length</u>();
+<dt><big><a name="OrderedAA.length"></a>@property size_t <u>length</u>();
 </big></dt>
 <dd>Describes the number of items in this array.<br><br>
 
 </dd>
-<dt><big><a name="opApply"></a>int <u>opApply</u>(int delegate(ref I) <i>dg</i>);
+<dt><big><a name="OrderedAA.opApply"></a>int <u>opApply</u>(int delegate(ref I) <i>dg</i>);
 </big></dt>
 <dd>foreach iterator for the obejcts in this array.<br><br>
 
 </dd>
-<dt><big><a name="opApply"></a>int <u>opApply</u>(int delegate(ref int, ref I) <i>dg</i>);
+<dt><big><a name="OrderedAA.opApply"></a>int <u>opApply</u>(int delegate(ref int, ref I) <i>dg</i>);
 </big></dt>
 <dd>foreach iterator for the index and objects in this array.<br><br>
 
 </dd>
-<dt><big><a name="opIndex"></a>I <u>opIndex</u>(const size_t <i>index</i>);
+<dt><big><a name="OrderedAA.opIndex"></a>I <u>opIndex</u>(const size_t <i>index</i>);
 </big></dt>
 <dd>Index function for an integer value.<br><br>
 
 </dd>
-<dt><big><a name="opIndex"></a>I <u>opIndex</u>(const K <i>key</i>);
+<dt><big><a name="OrderedAA.opIndex"></a>I <u>opIndex</u>(const K <i>key</i>);
 </big></dt>
 <dd>Index function for a <i>key</i>.<br><br>
 

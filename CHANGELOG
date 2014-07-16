@@ -1,5 +1,6 @@
 Version 2.2.1 beta
 ------------------
+- Added: keep NULL texture names such as AASTINKY, BADPATCH and others at the top of the texture list when sorting textures.
 - Fixed: lump, texture and patch names are now correctly interpreted as ASCII strings.
 
 Version 2.2.0 beta

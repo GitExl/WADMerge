@@ -46,6 +46,9 @@ public final class OrderedAA(K, I) {
     /// Keys pointing to item array indices for presence tests and fast lookups.
     private size_t[K] mKeys;
 
+    /// The delegate declaration for the sorting comparison function.
+    public alias Comparator = bool delegate(K, K);
+
 
     /**
      * Adds a new item to this array.
@@ -86,14 +89,35 @@ public final class OrderedAA(K, I) {
     }
 
     /**
-     * Sorts the items in this array by their key.
+     * Sorts the items in this array by their keys.
      */
     public void sort() {
         // Create a flat list of the keys present in this array and sort them.
         K[] keyList = this.mKeys.keys.dup;
         keyList.sort();
 
-        // Rebuild the item array in the order of the key list.
+        rebuildItemArray(keyList);
+    }
+
+    /**
+     * Sorts the items in this array by their keys.
+     * A comparator delegate can be passed in that will handle the sorting comparisons.
+     *
+     * Params:
+     * comp = the comparator delegate. See OrderedAA.Comparator.
+     */
+    public void sort(Comparator comp) {
+        // Create a flat list of the keys present in this array and sort them.
+        K[] keyList = this.mKeys.keys.dup;
+        std.algorithm.sort!(comp)(keyList);
+
+        rebuildItemArray(keyList);
+    }
+
+    /**
+     * Rebuilds the items array in the order of the key list argument.
+     */
+    private void rebuildItemArray(K[] keyList) {
         I[] newItems;
         foreach (size_t index, K key; keyList) {
             newItems ~= this.mItems[this.mKeys[key]];

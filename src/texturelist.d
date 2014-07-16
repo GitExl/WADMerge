@@ -31,6 +31,7 @@ import std.string;
 import wad;
 import util;
 import console;
+import nulltextures;
 import orderedaa;
 
 
@@ -245,7 +246,27 @@ public final class TextureList {
      * Sorts the textures in this list by name. Patch names are unaffected.
      */
     public void sort() {
-        this.mTextures.sort();
+        this.mTextures.sort(delegate bool(string a, string b) {
+            ptrdiff_t indexA = getArrayIndex(NULL_TEXTURES, a);
+            ptrdiff_t indexB = getArrayIndex(NULL_TEXTURES, b);
+
+            // Test if multiple NULL texture names are present. This might mean that the user is merging WADs that
+            // were made for different IWADs, but it's up to the user to correct this.
+            if (indexA != -1 && indexB != -1) {
+                console.writeLine(Color.IMPORTANT,
+                                  format("Multiple NULL texture names found. Please use only one of %s or %s.", a, b));
+                return a < b;
+            }
+
+            // Keep null texture names at the top of the list.
+            if (indexA != -1) {
+                return true;
+            } else if (indexB != -1) {
+                return false;
+            }
+
+            return a < b;
+        });
     }
 
     /**

@@ -89,6 +89,7 @@
   <resfile />
   <exefile>$(OutDir)\..\..\bin\$(ProjectName)_debug.exe</exefile>
   <useStdLibPath>1</useStdLibPath>
+  <cRuntime>2</cRuntime>
   <additionalOptions />
   <preBuildCommand />
   <postBuildCommand />
@@ -183,6 +184,7 @@
   <resfile />
   <exefile>$(OutDir)\..\..\bin\$(ProjectName).exe</exefile>
   <useStdLibPath>1</useStdLibPath>
+  <cRuntime>1</cRuntime>
   <additionalOptions />
   <preBuildCommand />
   <postBuildCommand />
@@ -277,6 +279,7 @@
   <resfile />
   <exefile>$(OutDir)\..\..\bin\$(ProjectName)_profile.exe</exefile>
   <useStdLibPath>1</useStdLibPath>
+  <cRuntime>1</cRuntime>
   <additionalOptions />
   <preBuildCommand />
   <postBuildCommand />
@@ -290,6 +293,7 @@
   <File path="main.d" />
   <File path="maplist.d" />
   <File path="namespacelist.d" />
+  <File path="nulltextures.d" />
   <File path="options.d" />
   <File path="orderedaa.d" />
   <File path="textlist.d" />
