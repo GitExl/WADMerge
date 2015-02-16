@@ -130,7 +130,7 @@ public final class MapList {
                 if (marker.type == MapType.UDMF) {
                     if (lumpName == "ENDMAP") {
                         marker.lumpIndexEnd = index + 1;
-                        addMarker(marker);
+                        addMarker(*marker);
                         marker = null;
                     }
                     lump.setIsUsed(true);
@@ -144,13 +144,13 @@ public final class MapList {
                     // End this map if it is a not a known map lump.
                     if (isMapLump(lumpName) == false) {
                         marker.lumpIndexEnd = index;
-                        addMarker(marker);
+                        addMarker(*marker);
                         marker = null;
 
                     // End this map if this lump is the last in the WAD.
                     } else if (index == lumps.length - 1) {
                         marker.lumpIndexEnd = index + 1;
-                        addMarker(marker);
+                        addMarker(*marker);
                         marker = null;
                         lump.setIsUsed(true);
 
@@ -188,12 +188,12 @@ public final class MapList {
         this.mMapMarkers.sort();
     }
 
-    private void addMarker(MapMarker* marker) {
+    private void addMarker(MapMarker marker) {
         if (this.mMapMarkers.contains(marker.name)) {
             console.writeLine(Color.IMPORTANT, "Overwriting map %s.", marker.name);
         }
 
-        this.mMapMarkers.update(marker.name, *marker);
+        this.mMapMarkers.update(marker.name, marker);
     }
 
     private bool isMapLump(const string lumpName) {

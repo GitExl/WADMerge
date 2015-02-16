@@ -365,7 +365,7 @@ public final class TextureList {
      * Enables Strife mode for this texture list. When set to true, Strife format TEXTURE lumps will be written
      * by this list.
      */
-    public void setStrifeMode(bool strifeMode) {
+    public void setStrifeMode(const bool strifeMode) {
         this.mStrifeMode = strifeMode;
     }
 

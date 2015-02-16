@@ -40,6 +40,7 @@ immutable ubyte[9] NULL_BYTES9;
  * Animated textures cycle through textures in the order they are stored in the TEXTURE lumps.
  */
 struct AnimateDef {
+
     /// Type of this animation. 0 for textures, 1 for flats.
     ubyte type;
 
@@ -56,6 +57,7 @@ struct AnimateDef {
  * Switch textures have an on and off texture.
  */
 struct SwitchesDef {
+
     /// The texture names to be used for the switch states.
     string textureOff;
     string textureOn;
@@ -150,11 +152,10 @@ public final class AnimatedList {
     }
 
     private void readAnimated(MemoryStream data) {
-        AnimateDef* animated;
         int index;
 
         while(1) {
-            animated = new AnimateDef();
+            AnimateDef animated;
             
             // A type of 0xFF indicates the end of the animated list.
             data.read(animated.type);
@@ -167,12 +168,12 @@ public final class AnimatedList {
             data.read(animated.speed);
 
             // Do not add this animation to the list if it already exists.
-            index = getAnimationIndex(*animated);
+            index = getAnimationIndex(animated);
             if (index > -1) {
-                this.mAnimations[index] = *animated;
+                this.mAnimations[index] = animated;
                 console.writeLine(Color.IMPORTANT, "Overwriting animated texture %s - %s", animated.textureLast, animated.textureFirst);
             } else {
-                this.mAnimations ~= *animated;
+                this.mAnimations ~= animated;
             }
         }
     }
@@ -204,7 +205,7 @@ public final class AnimatedList {
         }
     }
 
-    private int getAnimationIndex(AnimateDef animation) {
+    private int getAnimationIndex(const AnimateDef animation) {
         foreach (int index, ref AnimateDef anim; this.mAnimations) {
             if (anim.textureFirst == animation.textureFirst &&
                 anim.textureLast == animation.textureLast) {
@@ -215,7 +216,7 @@ public final class AnimatedList {
         return -1;
     }
 
-    private int getSwitchesIndex(SwitchesDef switches) {
+    private int getSwitchesIndex(const SwitchesDef switches) {
         foreach (int index, ref SwitchesDef switchdef; this.mSwitches) {
             if (switchdef.textureOff == switches.textureOff &&
                 switchdef.textureOn == switches.textureOn) {

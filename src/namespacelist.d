@@ -214,7 +214,7 @@ public final class NamespaceList {
     /**
      * Returns: The namespaces that are contained in this list.
      */
-    public ref Namespace getNamespace(string name) {
+    public ref Namespace getNamespace(const string name) {
         return this.mNamespaces[name];
     }
 }

@@ -85,7 +85,7 @@ public final class Lump {
     public this(string name, ubyte[] data) {
         this.mName = name;
         this.mSize = cast(int)data.length;
-        this.mData = data;
+        this.mData = data.dup;
     }
 
     /**
@@ -96,7 +96,7 @@ public final class Lump {
      * size   = The size of the new lump object's data.
      * offset = The byte location where the new lump object's data is stored in a WAD.
      */
-    public this(string name, int size, int offset) {
+    public this(string name, const int size, const int offset) {
         this.mOffset = offset;
         this.mSize = size;
         this.mName = name;
@@ -124,7 +124,7 @@ public final class Lump {
      *        data's length.
      */
     public void putData(ubyte[] data) {
-        this.mData = data;
+        this.mData = data.dup;
         this.mSize = cast(int)data.length;
     }
 
@@ -171,7 +171,7 @@ public final class Lump {
      * Params:
      * isUsed = If true, this lump is used by a WAD.
      */
-    public void setIsUsed(bool isUsed) {
+    public void setIsUsed(const bool isUsed) {
         this.mIsUsed = isUsed;
     }
 
@@ -202,7 +202,7 @@ public final class Lump {
      * Params:
      * offset = the byte offset at which this lump's data is located in a WAD file.
      */
-    public void setOffset(int offset) {
+    public void setOffset(const int offset) {
         this.mOffset = offset;
     }
 

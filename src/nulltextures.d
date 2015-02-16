@@ -29,6 +29,7 @@ module nulltextures;
 /// These texture names must always be the first one in a textures list if found.
 /// See http://doomwiki.org/wiki/AASTINKY for more information as to why.
 public string[] NULL_TEXTURES = [
+
     // Doom\Strife
     "AASTINKY",
 
