@@ -9,7 +9,7 @@
 </big></dt>
 <dd>Keeps track of a list of duplicate entries to be written to a readable text file.<br><br>
 
-<dl><dt><big><a name="DuplicateList.add"></a>void <u>add</u>(string <i>typeName</i>, WAD <i>wadA</i>, string <i>nameA</i>, WAD <i>wadB</i>, string <i>nameB</i>, immutable bool <i>merged</i>);
+<dl><dt><big><a name="DuplicateList.add"></a>void <u>add</u>(string <i>typeName</i>, WAD <i>wadA</i>, string <i>nameA</i>, const int <i>indexA</i>, WAD <i>wadB</i>, string <i>nameB</i>, const int <i>indexB</i>, immutable bool <i>merged</i>);
 </big></dt>
 <dd>Adds a new duplicate entry.
 <br><br>
@@ -20,10 +20,14 @@
 <td>The WAD that the first entry is in.</td></tr>
 <tr><td>string <i>nameA</i></td>
 <td>The name of the first entry.</td></tr>
+<tr><td>int <i>indexA</i></td>
+<td>The index of the first entry.</td></tr>
 <tr><td>WAD <i>wadB</i></td>
 <td>The WAD that the second entry is in.</td></tr>
 <tr><td>string <i>nameB</i></td>
 <td>The WAD that the second entry.</td></tr>
+<tr><td>int <i>indexB</i></td>
+<td>The index of the second entry.</td></tr>
 <tr><td>bool <i>merged</i></td>
 <td>If <b>true</b>, this duplicate was resolved by merging isntead of overwriting.</td></tr>
 </table><br>
