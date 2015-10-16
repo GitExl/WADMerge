@@ -67,6 +67,9 @@ public final class Lump {
     /// The WAD this lump is in.
     private WAD mWAD;
 
+    /// The index of this lump in it's WAD.
+    private int mIndex;
+
 
     /**
      * Constructor for an empty lump.
@@ -229,6 +232,20 @@ public final class Lump {
     public void setWAD(WAD wad) {
         this.mWAD = wad;
     }
+
+    /**
+     * Returns: The index of this lump in the WAD.
+     */
+    public int getIndex() {
+        return this.mIndex;
+    }
+    
+    /**
+     * Sets the index of this lump in the WAD.
+     */
+    public void setIndex(const int index) {
+        this.mIndex = index;
+    }
 }
 
 
@@ -371,6 +388,7 @@ public final class WAD {
     public Lump addLump(Lump other) {
         Lump newLump = other;
         newLump.setWAD(this);
+        newLump.setIndex(this.mLumpCount);
 
         this.mLumps.add(newLump.getName(), newLump);
         this.mLumpCount += 1;
@@ -389,6 +407,7 @@ public final class WAD {
     public Lump addLump(const string name) {
         Lump newLump = new Lump(name);
         newLump.setWAD(this);
+        newLump.setIndex(this.mLumpCount);
 
         this.mLumps.add(newLump.getName(), newLump);
         this.mLumpCount += 1;
@@ -418,6 +437,7 @@ public final class WAD {
             Lump lump = new Lump(name, size, offset);
             lump.readData(file);
             lump.setWAD(this);
+            lump.setIndex(index);
 
             this.mLumps.add(name, lump);
         }

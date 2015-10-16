@@ -74,6 +74,9 @@ public final class NamespaceList {
             "F": "flat",
             "PP": "patch",
             "P": "patch",
+            "P1": "patch",
+            "P2": "patch",
+            "P3": "patch",
             "TX": "texture",
             "C": "colormap",
             "A": "acs",
@@ -153,7 +156,7 @@ public final class NamespaceList {
                         console.writeLine(Color.IMPORTANT, "Overwriting %s:%s", namespace.name, lumpName);
 
                         Lump other = namespace.lumps[lumpName];
-                        dupes.add(getFullName(namespace.name), other.getWAD(), other.getName(), lump.getWAD(), lump.getName(), false);
+                        dupes.add(getFullName(namespace.name), other.getWAD(), other.getName(), other.getIndex(), lump.getWAD(), lump.getName(), lump.getIndex(), false);
 
                         namespace.lumps.update(lumpName, lump);
                     }
@@ -170,7 +173,7 @@ public final class NamespaceList {
                         console.writeLine(Color.IMPORTANT, "Overwriting loose lump %s", lumpName);
 
                         Lump other = this.mLoose.lumps[lumpName];
-                        dupes.add("lump", other.getWAD(), other.getName(), lump.getWAD(), lump.getName(), false);
+                        dupes.add("loose lump", other.getWAD(), other.getName(), other.getIndex(), lump.getWAD(), lump.getName(), lump.getIndex(), false);
 
                         this.mLoose.lumps.update(lumpName, lump);
                     }
@@ -256,7 +259,7 @@ public final class NamespaceList {
      */
     public string getFullName(string name) {
         if (name in mNamespaceNames) {
-            return mNamespaceNames[name];
+            return format("%s lump", mNamespaceNames[name]);
         }
 
         return format("%s lump", name);

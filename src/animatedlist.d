@@ -181,6 +181,7 @@ public final class AnimatedList {
 
     private DuplicateList readAnimated(WAD wad, MemoryStream data) {
         int index;
+        int animIndex = 0;
 
         DuplicateList dupes = new DuplicateList();
 
@@ -202,11 +203,13 @@ public final class AnimatedList {
             index = getAnimationIndex(animated);
             if (index > -1) {
                 console.writeLine(Color.IMPORTANT, "Overwriting animated texture %s", animated.getName());
-                dupes.add("animated texture", this.mAnimations[index].wad, this.mAnimations[index].getName(), animated.wad, animated.getName(), false);
+                dupes.add("animated texture", this.mAnimations[index].wad, this.mAnimations[index].getName(), index, animated.wad, animated.getName(), animIndex, false);
                 this.mAnimations[index] = animated;
             } else {
                 this.mAnimations ~= animated;
             }
+
+            animIndex += 1;
         }
 
         return dupes;
@@ -215,6 +218,7 @@ public final class AnimatedList {
     private DuplicateList readSwitches(WAD wad, MemoryStream data) {
         SwitchesDef switches;
         int index;
+        int switchIndex = 0;
     
         DuplicateList dupes = new DuplicateList();
 
@@ -234,11 +238,13 @@ public final class AnimatedList {
             index = getSwitchesIndex(switchdef);
             if (index > -1) {
                 console.writeLine(Color.IMPORTANT, "Overwriting switch textures %s - %s", switchdef.textureOff, switchdef.textureOn);
-                dupes.add("switch textures", this.mSwitches[index].wad, this.mSwitches[index].getName(), switchdef.wad, switchdef.getName(), false);
+                dupes.add("switch texture", this.mSwitches[index].wad, this.mSwitches[index].getName(), index, switchdef.wad, switchdef.getName(), switchIndex, false);
                 this.mSwitches[index] = switchdef;
             } else {
                 this.mSwitches ~= switchdef;
             }
+
+            switchIndex += 1;
         }
 
         return dupes;

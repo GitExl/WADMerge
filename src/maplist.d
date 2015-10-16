@@ -201,7 +201,7 @@ public final class MapList {
             console.writeLine(Color.IMPORTANT, "Overwriting map %s.", marker.name);
 
             MapMarker dupMarker = this.mMapMarkers[marker.name];
-            dupes.add("map", dupMarker.wad, dupMarker.name, marker.wad, marker.name, false);
+            dupes.add("map", dupMarker.wad, dupMarker.name, dupMarker.lumpIndexStart, marker.wad, marker.name, dupMarker.lumpIndexStart, false);
         }
         this.mMapMarkers.update(marker.name, marker);
 

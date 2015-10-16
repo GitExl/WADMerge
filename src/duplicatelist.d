@@ -49,6 +49,10 @@ private struct Duplicate {
     string nameA;
     string nameB;
 
+    /// The indices of the entries. -1 if the index is irrelevant.
+    int indexA;
+    int indexB;
+
     /// If true, entry B was merged with entry A.
     bool merged;
 
@@ -64,14 +68,14 @@ private struct Duplicate {
      * Returns: The full name of the WAD and entry of duplicate entry A.
      */
     public string getNameA() {
-         return format("%s:%s", baseName(wadA.getFileName()), nameA);
+         return format("%s, %s, index %d", baseName(wadA.getFileName()), nameA, indexA);
     }
 
     /**
      * Returns: The full name of the WAD and entry of duplicate entry B.
      */
     public string getNameB() {
-         return format("%s:%s", baseName(wadB.getFileName()), nameB);
+         return format("%s, %s, index %d", baseName(wadB.getFileName()), nameB, indexB);
     }
 }
 
@@ -92,12 +96,14 @@ public final class DuplicateList {
      * typeName = The type of entry.
      * wadA = The WAD that the first entry is in.
      * nameA = The name of the first entry.
+     * indexA = The index of the first entry.
      * wadB = The WAD that the second entry is in.
      * nameB = The WAD that the second entry.
+     * indexB = The index of the second entry.
      * merged = If true, this duplicate was resolved by merging isntead of overwriting.
      */
-    public void add(string typeName, WAD wadA, string nameA, WAD wadB, string nameB, immutable bool merged) {
-        this.mDuplicates ~= Duplicate(typeName, wadA, wadB, nameA, nameB, merged);
+    public void add(string typeName, WAD wadA, string nameA, const int indexA, WAD wadB, string nameB, const int indexB, immutable bool merged) {
+        this.mDuplicates ~= Duplicate(typeName, wadA, wadB, nameA, nameB, indexA, indexB, merged);
     }
 
     /**
@@ -138,7 +144,7 @@ public final class DuplicateList {
             nameALen = max(nameA.length, nameALen);
             nameBLen = max(nameB.length, nameBLen);
         }
-        string formatStr = "%" ~ to!string(opLen) ~ "-s  %" ~ to!string(nameALen) ~ "-s  %" ~ to!string(nameBLen) ~ "-s\n";
+        string formatStr = "%" ~ to!string(opLen) ~ "-s   %" ~ to!string(nameALen) ~ "-s   %" ~ to!string(nameBLen) ~ "-s\n";
 
         // Write entries to file.
         File f = File(fileName, "w");

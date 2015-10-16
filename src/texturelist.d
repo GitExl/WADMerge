@@ -73,6 +73,9 @@ private struct TextureDef {
 
     /// The WAD this texture definition belongs to.
     WAD wad;
+
+    /// The index in the texture list lump.
+    int index;
 }
 
 
@@ -217,7 +220,7 @@ public final class TextureList {
                     console.writeLine(Color.IMPORTANT, "Overwriting texture %s", otherTexture.name);
 
                     TextureDef thisTexture = this.mTextures[otherTexture.name];
-                    dupes.add("texture", thisTexture.wad, thisTexture.name, otherTexture.wad, otherTexture.name, false);
+                    dupes.add("texture", thisTexture.wad, thisTexture.name, thisTexture.index, otherTexture.wad, otherTexture.name, otherTexture.index, false);
 
                     this.mTextures.update(otherTexture.name, otherTexture);
                 }
@@ -311,6 +314,7 @@ public final class TextureList {
             TextureDef texture;
             texture.name = readPaddedString(data, 8);
             texture.wad = wad;
+            texture.index = textureIndex;
             data.read(unused);
             data.read(unused);
             data.read(texture.width);

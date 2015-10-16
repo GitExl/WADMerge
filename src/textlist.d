@@ -78,7 +78,7 @@ public final class TextList {
                 // Add lump contents to an existing text lump.
                 if (this.mTextLumps.contains(lumpName) == true) {
                     TextLump* other = this.mTextLumps[lumpName];
-                    dupes.add("text", other.wad, other.name, lump.getWAD(), lumpName, true);
+                    dupes.add("text lump", other.wad, other.name, other.lump.getIndex(), lump.getWAD(), lumpName, lump.getIndex(), true);
 
                     console.writeLine(Color.INFO, "Merging text lump %s", lumpName);
 
