@@ -48,4 +48,12 @@ Sorting
 --sort-maps=true       Sort maps alphabetically.
 --sort-loose=false     Sort loose lumps alphabetically.
 --sort-textures=false  Sort textures alphabetically.
---sort-text=true       Sort text lumps alphabetically.";
+--sort-text=true       Sort text lumps alphabetically.
+
+For example:
+wadmerge map01.wad map02.wad resources.wad --output merged.wad --overwrite
+--duplicates duplicates.txt
+
+Merges map01.wad, map02.wad and resources.wad together into merged.wad,
+overwriting merged.wad if it already exists and writes duplicate entry
+information into duplicates.txt.";
