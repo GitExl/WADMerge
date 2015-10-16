@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2014, Dennis Meuwissen
+    Copyright (c) 2015, Dennis Meuwissen
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,12 @@
 module animatedlist;
 
 import std.stream;
+import std.string;
 
 import wad;
 import util;
 import console;
+import duplicatelist;
 
 
 immutable ubyte[9] NULL_BYTES9;
@@ -39,7 +41,7 @@ immutable ubyte[9] NULL_BYTES9;
  * An animated texture definition.
  * Animated textures cycle through textures in the order they are stored in the TEXTURE lumps.
  */
-struct AnimateDef {
+private struct AnimateDef {
 
     /// Type of this animation. 0 for textures, 1 for flats.
     ubyte type;
@@ -50,13 +52,24 @@ struct AnimateDef {
 
     /// The speed at which the texture changes, in tics.
     uint speed;
+
+    /// The WAD this defintion belongs to.
+    WAD wad;
+
+    
+    /**
+     * Returns: The name of this animated texture definition.
+     */
+    public string getName() {
+        return format("%s-%s", textureLast, textureFirst);
+    }
 }
 
 /**
  * A switch texture definition.
  * Switch textures have an on and off texture.
  */
-struct SwitchesDef {
+private struct SwitchesDef {
 
     /// The texture names to be used for the switch states.
     string textureOff;
@@ -65,6 +78,17 @@ struct SwitchesDef {
     /// Defines the IWAD the the switch textures are a part of.
     /// 1 for shareware IWADs, 2 for shareware Doom, 3 for shareware, Doom or Doom II.
     ushort iwad;
+
+    /// The WAD this definition belongs to.
+    WAD wad;
+
+
+    /**
+     * Returns: The name of this switch texture definition.
+     */
+    public string getName() {
+        return format("%s\\%s", textureOff, textureOn);
+    }
 }
 
 
@@ -87,18 +111,22 @@ public final class AnimatedList {
      * Params:
      * wad = The WAD file to read animations and switches from.
      */
-    public void readFrom(WAD wad) {
+    public DuplicateList readFrom(WAD wad) {
+        DuplicateList dupes = new DuplicateList();
+
         Lump animated = wad.getLump("ANIMATED");
         if (animated !is null) {
-            readAnimated(animated.getStream());
+            dupes.add(readAnimated(wad, animated.getStream()));
             animated.setIsUsed(true);
         }
 
         Lump switches = wad.getLump("SWITCHES");
         if (switches !is null) {
-            readSwitches(switches.getStream());
+            dupes.add(readSwitches(wad, switches.getStream()));
             switches.setIsUsed(true);
         }
+
+        return dupes;
     }
 
     /**
@@ -151,8 +179,10 @@ public final class AnimatedList {
         wad.addLump(new Lump("SWITCHES", switches.data()));
     }
 
-    private void readAnimated(MemoryStream data) {
+    private DuplicateList readAnimated(WAD wad, MemoryStream data) {
         int index;
+
+        DuplicateList dupes = new DuplicateList();
 
         while(1) {
             AnimateDef animated;
@@ -165,44 +195,53 @@ public final class AnimatedList {
 
             animated.textureLast = readPaddedString(data, 9);
             animated.textureFirst = readPaddedString(data, 9);
+            animated.wad = wad;
             data.read(animated.speed);
 
             // Do not add this animation to the list if it already exists.
             index = getAnimationIndex(animated);
             if (index > -1) {
+                console.writeLine(Color.IMPORTANT, "Overwriting animated texture %s", animated.getName());
+                dupes.add("animated texture", this.mAnimations[index].wad, this.mAnimations[index].getName(), animated.wad, animated.getName(), false);
                 this.mAnimations[index] = animated;
-                console.writeLine(Color.IMPORTANT, "Overwriting animated texture %s - %s", animated.textureLast, animated.textureFirst);
             } else {
                 this.mAnimations ~= animated;
             }
         }
+
+        return dupes;
     }
 
-    private void readSwitches(MemoryStream data) {
-        SwitchesDef* switches;
+    private DuplicateList readSwitches(WAD wad, MemoryStream data) {
+        SwitchesDef switches;
         int index;
+    
+        DuplicateList dupes = new DuplicateList();
 
         while(1) {
-            switches = new SwitchesDef();
+            SwitchesDef switchdef;
 
-            switches.textureOff = readPaddedString(data, 9);
-            switches.textureOn = readPaddedString(data, 9);
+            switchdef.textureOff = readPaddedString(data, 9);
+            switchdef.textureOn = readPaddedString(data, 9);
 
             // An IWAD id of 0 terminates this list.
-            data.read(switches.iwad);
-            if (switches.iwad == 0) {
+            data.read(switchdef.iwad);
+            if (switchdef.iwad == 0) {
                 break;
             }
 
             // Overwrite existing definitions.
-            index = getSwitchesIndex(*switches);
+            index = getSwitchesIndex(switchdef);
             if (index > -1) {
-                this.mSwitches[index] = *switches;
-                console.writeLine(Color.IMPORTANT, "Overwriting switch textures %s - %s", switches.textureOff, switches.textureOn);
+                console.writeLine(Color.IMPORTANT, "Overwriting switch textures %s - %s", switchdef.textureOff, switchdef.textureOn);
+                dupes.add("switch textures", this.mSwitches[index].wad, this.mSwitches[index].getName(), switchdef.wad, switchdef.getName(), false);
+                this.mSwitches[index] = switchdef;
             } else {
-                this.mSwitches ~= *switches;
+                this.mSwitches ~= switchdef;
             }
         }
+
+        return dupes;
     }
 
     private int getAnimationIndex(const AnimateDef animation) {

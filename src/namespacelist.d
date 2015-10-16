@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2014, Dennis Meuwissen
+    Copyright (c) 2015, Dennis Meuwissen
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ import std.stdio;
 import wad;
 import console;
 import orderedaa;
+import duplicatelist;
 
 
 /**
@@ -60,7 +61,27 @@ public final class NamespaceList {
 
     /// Loose lump namespace.
     private Namespace mLoose;
+    
+    /// These map short namespace names like SS and TX to readable names.
+    static public string[string] mNamespaceNames;
 
+
+    static this() {
+        mNamespaceNames = [
+            "SS": "sprite",
+            "S": "sprite",
+            "FF": "flat",
+            "F": "flat",
+            "PP": "patch",
+            "P": "patch",
+            "TX": "texture",
+            "C": "colormap",
+            "A": "acs",
+            "HI": "highres texture",
+            "V": "voice",
+            "VX": "voxel"
+        ];
+    }
 
     this() {
         this.mLoose.lumps = new OrderedAA!(string,Lump);
@@ -72,12 +93,14 @@ public final class NamespaceList {
      * Params:
      * wad = The WAD file to add namespaces from.
      */
-    public void readFrom(WAD wad) {
+    public DuplicateList readFrom(WAD wad) {
         Namespace* namespace;
         string name;
         string lumpName;
         int lumpSize;
         ptrdiff_t nameIndex;
+
+        DuplicateList dupes = new DuplicateList();
 
         foreach (Lump lump; wad.getLumps()) {
             lumpName = lump.getName();
@@ -128,6 +151,10 @@ public final class NamespaceList {
                 if (namespace.lumps.contains(lumpName)) {
                     if (lump.areContentsEqual(namespace.lumps[lumpName]) == false) {
                         console.writeLine(Color.IMPORTANT, "Overwriting %s:%s", namespace.name, lumpName);
+
+                        Lump other = namespace.lumps[lumpName];
+                        dupes.add(getFullName(namespace.name), other.getWAD(), other.getName(), lump.getWAD(), lump.getName(), false);
+
                         namespace.lumps.update(lumpName, lump);
                     }
                 } else {
@@ -141,6 +168,10 @@ public final class NamespaceList {
                 if (this.mLoose.lumps.contains(lumpName)) {
                     if (lump.areContentsEqual(this.mLoose.lumps[lumpName]) == false) {
                         console.writeLine(Color.IMPORTANT, "Overwriting loose lump %s", lumpName);
+
+                        Lump other = this.mLoose.lumps[lumpName];
+                        dupes.add("lump", other.getWAD(), other.getName(), lump.getWAD(), lump.getName(), false);
+
                         this.mLoose.lumps.update(lumpName, lump);
                     }
                 } else {
@@ -148,6 +179,8 @@ public final class NamespaceList {
                 }
             }
         }
+
+        return dupes;
     }
 
     /**
@@ -216,5 +249,16 @@ public final class NamespaceList {
      */
     public ref Namespace getNamespace(const string name) {
         return this.mNamespaces[name];
+    }
+
+    /**
+     * Returns: a readable name for a short namespace name,
+     */
+    public string getFullName(string name) {
+        if (name in mNamespaceNames) {
+            return mNamespaceNames[name];
+        }
+
+        return format("%s lump", name);
     }
 }

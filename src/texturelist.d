@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2014, Dennis Meuwissen
+    Copyright (c) 2015, Dennis Meuwissen
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@ import util;
 import console;
 import nulltextures;
 import orderedaa;
+import duplicatelist;
 
 
 /**
@@ -58,17 +59,20 @@ private struct PatchDef {
  * Textures define an area into which patches are drawn.
  */
 private struct TextureDef {
-    /// The name of this texture.
+    //// The name of this texture.
     string name;
 
-    // The width of this texture.
+    /// The width of this texture.
     short width;
 
-    // The height of this texture.
+    /// The height of this texture.
     short height;
 
-    // The patches that make up this texture's image.
+    /// The patches that make up this texture's image.
     PatchDef[] patches;
+
+    /// The WAD this texture definition belongs to.
+    WAD wad;
 }
 
 
@@ -117,13 +121,13 @@ public final class TextureList {
 
         // Read texture data.
         Lump texture1 = wad.getLump("TEXTURE1");
-        this.readTextures(texture1.getStream());
+        this.readTextures(wad, texture1.getStream());
         texture1.setIsUsed(true);
 
         // If TEXTURE2 is present, add the textures from that as well.
         if (wad.containsLump("TEXTURE2") == true) {
             Lump texture2 = wad.getLump("TEXTURE2");
-            this.readTextures(texture2.getStream());
+            this.readTextures(wad, texture2.getStream());
             texture2.setIsUsed(true);
         }
     }
@@ -163,6 +167,7 @@ public final class TextureList {
             textures.write(cast(uint)0);
             textures.write(texture.width);
             textures.write(texture.height);
+            texture.wad = wad;
 
             if (this.mStrifeMode == false) {
                 textures.write(cast(uint)0);
@@ -201,13 +206,19 @@ public final class TextureList {
      * Params:
      * otherList = The other TextureList object to merge with this one.
      */
-    public void mergeWith(TextureList otherList) {
+    public DuplicateList mergeWith(TextureList otherList) {
+        DuplicateList dupes = new DuplicateList();
+
         foreach (ref TextureDef otherTexture; otherList.getTextures()) {
             
             // Overwrite the existing texture if the other texture differs.
             if (this.mTextures.contains(otherTexture.name)) {
                 if (texturesAreEqual(otherTexture, this.mTextures[otherTexture.name]) != true) {
                     console.writeLine(Color.IMPORTANT, "Overwriting texture %s", otherTexture.name);
+
+                    TextureDef thisTexture = this.mTextures[otherTexture.name];
+                    dupes.add("texture", thisTexture.wad, thisTexture.name, otherTexture.wad, otherTexture.name, false);
+
                     this.mTextures.update(otherTexture.name, otherTexture);
                 }
 
@@ -216,6 +227,8 @@ public final class TextureList {
                 this.mTextures.add(otherTexture.name, otherTexture);
             }
         }
+
+        return dupes;
     }
 
     /**
@@ -276,7 +289,7 @@ public final class TextureList {
         return this.mTextures;
     }
 
-    private void readTextures(MemoryStream data) {
+    private void readTextures(WAD wad, MemoryStream data) {
         int textureCount;
         int[] textureOffsets;
         ushort unused;
@@ -297,6 +310,7 @@ public final class TextureList {
 
             TextureDef texture;
             texture.name = readPaddedString(data, 8);
+            texture.wad = wad;
             data.read(unused);
             data.read(unused);
             data.read(texture.width);

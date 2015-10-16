@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2014, Dennis Meuwissen
+    Copyright (c) 2015, Dennis Meuwissen
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ import help;
 /// Container for commandline options.
 public struct Options {
     string outputFile = "merged.wad";
+    string duplicateFile = "";
     bool overwrite = false;
     bool filterPatches = true;
     bool mergeText = true;
@@ -68,6 +69,7 @@ public Options parse(ref string[] argv) {
         "help|h|?",       &writeHelp,
 
         "output|o",       &opts.outputFile,
+        "duplicates|d",   &opts.duplicateFile,
         "overwrite|w",    &opts.overwrite,
         "filter-patches", &opts.filterPatches,
         "merge-text",     &opts.mergeText,

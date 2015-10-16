@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2014, Dennis Meuwissen
+    Copyright (c) 2015, Dennis Meuwissen
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,16 @@ import orderedaa;
 import util;
 import wad;
 import console;
+import duplicatelist;
 
 
 /// A text lump and it's contents.
 private struct TextLump {
     string name;
     ubyte[] contents;
+    
+    WAD wad;
+    Lump lump;
 }
 
 
@@ -60,9 +64,11 @@ public final class TextList {
      * Params:
      * wad = The WAD file to add text lumps from.
      */
-    public void readFrom(WAD wad) {
+    public DuplicateList readFrom(WAD wad) {
         string lumpName;
         TextLump* text;
+
+        DuplicateList dupes = new DuplicateList();
 
         foreach (Lump lump; wad.getLumps()) {
             lumpName = lump.getName();
@@ -71,23 +77,32 @@ public final class TextList {
 
                 // Add lump contents to an existing text lump.
                 if (this.mTextLumps.contains(lumpName) == true) {
+                    TextLump* other = this.mTextLumps[lumpName];
+                    dupes.add("text", other.wad, other.name, lump.getWAD(), lumpName, true);
+
+                    console.writeLine(Color.INFO, "Merging text lump %s", lumpName);
+
                     TextLump* text = this.mTextLumps.get(lumpName, null);
                     text.contents ~= cast(ubyte[])"\n";
                     text.contents ~= lump.getData();
-
-                    console.writeLine(Color.INFO, "Merging text lump %s", lumpName);
+                    text.lump = lump;
+                    text.wad = wad;
 
                 // Create a new text lump.
                 } else {
                     text = new TextLump();
                     text.name = lumpName;
                     text.contents = lump.getData().dup;
+                    text.wad = wad;
+                    text.lump = lump;
                     this.mTextLumps.add(lumpName, text);
                 }
 
                 lump.setIsUsed(true);
             }
         }
+
+        return dupes;
     }
 
     /**

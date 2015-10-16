@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2014, Dennis Meuwissen
+    Copyright (c) 2015, Dennis Meuwissen
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@ Output
 -o, --output=path      Set the output WAD filename. Default: merged.wad
 -w, --overwrite        Overwrite the output file without asking for
                        confirmation.
+-d, --duplicates=path  Set the filename to write duplicate lump names to.
 --filter-patches=true  Do not include patch graphic lumps that are not present
                        in any texture definition.
 --merge-text=true      Merges text-based lumps together.

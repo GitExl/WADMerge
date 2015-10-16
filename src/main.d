@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2014, Dennis Meuwissen
+    Copyright (c) 2015, Dennis Meuwissen
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ import maplist;
 import namespacelist;
 import textlist;
 import animatedlist;
+import duplicatelist;
 
 
 /// Full program name.
@@ -46,8 +47,8 @@ private immutable string NAME = "WADMerge";
 
 /// Program version information.
 private immutable ubyte VERSION_MAJOR = 2;
-private immutable ubyte VERSION_MINOR = 2;
-private immutable ubyte VERSION_PATCH = 1;
+private immutable ubyte VERSION_MINOR = 3;
+private immutable ubyte VERSION_PATCH = 0;
 
 /// If true, this program is marked as a beta version.
 private immutable bool VERSION_BETA = true;
@@ -79,7 +80,7 @@ public int main(string[] argv) {
                 return 0;
             }
         } else {
-            console.writeLine(Color.INFO, "Overwriting %s.", opts.outputFile);
+            console.writeLine(Color.INFO, "Overwriting '%s'.", opts.outputFile);
         }
     }
 
@@ -90,10 +91,13 @@ public int main(string[] argv) {
     TextList textLumps = new TextList();
     AnimatedList animated = new AnimatedList();
 
+    // Contains duplicate entry information.
+    DuplicateList dupes = new DuplicateList();
+
     // Read and process each WAD file.
     WAD[] wadList;
     foreach (string wadPath; wadPaths) {
-        console.writeLine(Color.NORMAL, "Adding %s...", wadPath);
+        console.writeLine(Color.NORMAL, "Adding '%s'...", wadPath);
 
         WAD wad;
         try {
@@ -111,15 +115,15 @@ public int main(string[] argv) {
             textures.setStrifeMode(true);
             console.writeLine(Color.INFO, "Merging textures in Strife mode.");
         }
-        textures.mergeWith(wadTextures);
+        dupes.add(textures.mergeWith(wadTextures));
         
         // Merge in other resource types.
-        animated.readFrom(wad);
-        maps.readFrom(wad);
+        dupes.add(animated.readFrom(wad));
+        dupes.add(maps.readFrom(wad));
         if (opts.mergeText == true) {
-            textLumps.readFrom(wad);
+            dupes.add(textLumps.readFrom(wad));
         }
-        namespaces.readFrom(wad);
+        dupes.add(namespaces.readFrom(wad));
     }
 
     textures.updatePatchNames();
@@ -151,7 +155,7 @@ public int main(string[] argv) {
     }
 
     // Create the output WAD and write resources to it.
-    console.writeLine(Color.NORMAL, "Writing %s...", opts.outputFile);
+    console.writeLine(Color.NORMAL, "Writing '%s'...", opts.outputFile);
     
     WAD output = new WAD(WADType.PWAD);
     namespaces.addLooseTo(output);
@@ -163,6 +167,12 @@ public int main(string[] argv) {
     maps.addTo(output);
     namespaces.addTo(output);
     output.writeTo(opts.outputFile);
+
+    // Write duplicate information to a separate file.
+    if (opts.duplicateFile != "") {
+        console.writeLine(Color.NORMAL, "Writing duplicates information to '%s'...", opts.duplicateFile);
+        dupes.writeTo(opts.duplicateFile);
+    }
 
     console.writeLine(Color.NORMAL, "Done.");
 
@@ -203,7 +213,7 @@ private void writeHeader() {
         writefln("%s, version %d.%d.%d", NAME, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
     }
 
-    writeln("Copyright (c) 2014, Dennis Meuwissen");
+    writeln("Copyright (c) 2015, Dennis Meuwissen");
     writeln("All rights reserved.");
     writeln();
 
@@ -244,13 +254,8 @@ private void validateInputFiles(string[] paths) {
  * Returns: An array of validated file paths.
  */
 private string[] getInputFiles(string[] args) {
-    if (args.length == 1) {
-        stderr.writeln("No input WAD files specified.");
-        exit(-1);
-    }
-
-    if (args.length == 2) {
-        stderr.writeln("Need at least 2 WAD files to merge.");
+    if (args.length <= 2) {
+        stderr.writeln("At least 2 WAD files are needed to perform a merge.");
         exit(-1);
     }
 

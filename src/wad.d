@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2014, Dennis Meuwissen
+    Copyright (c) 2015, Dennis Meuwissen
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -63,6 +63,9 @@ public final class Lump {
 
     /// The raw data of this lump.
     private ubyte[] mData;
+
+    /// The WAD this lump is in.
+    private WAD mWAD;
 
 
     /**
@@ -212,6 +215,20 @@ public final class Lump {
     public MemoryStream getStream() {
         return new MemoryStream(this.mData);
     }
+
+    /**
+     * Returns: The WAD this lump is in, if any.
+     */
+    public WAD getWAD() {
+        return this.mWAD;
+    }
+    
+    /**
+     * Sets the WAD this lump is in.
+     */
+    public void setWAD(WAD wad) {
+        this.mWAD = wad;
+    }
 }
 
 
@@ -222,6 +239,9 @@ public final class Lump {
  * See <a href="http://doomwiki.org/wiki/WAD">The Doom Wiki</a> for more information about WAD files.
  */
 public final class WAD {
+
+    /// The file name of this WAD file.
+    private string mFileName;
 
     /// The type of this WAD file.
     private WADType mType;
@@ -256,6 +276,7 @@ public final class WAD {
     this(const string fileName) {
         char[4] id;
 
+        mFileName = fileName;
         BufferedFile file = new BufferedFile(fileName, FileMode.In);
 
         // Validate magic bytes, which should correspond to a known WAD type.
@@ -287,6 +308,7 @@ public final class WAD {
      * fileName = The name of the file to write to. This file will be overwritten if it already exists.
      */
     public void writeTo(const string fileName) {
+        mFileName = fileName;
 
         // Calculcate lump offsets inside the WAD file.
         // The directory follows the lump data.
@@ -318,6 +340,9 @@ public final class WAD {
             file.write(lump.getOffset());
             file.write(lump.getSize());
             writePaddedString(file, lump.getName(), 8);
+
+            // Update lump ownership.
+            lump.setWAD(this);
         }
 
         file.close();
@@ -345,6 +370,7 @@ public final class WAD {
      */
     public Lump addLump(Lump other) {
         Lump newLump = other;
+        newLump.setWAD(this);
 
         this.mLumps.add(newLump.getName(), newLump);
         this.mLumpCount += 1;
@@ -362,6 +388,7 @@ public final class WAD {
      */
     public Lump addLump(const string name) {
         Lump newLump = new Lump(name);
+        newLump.setWAD(this);
 
         this.mLumps.add(newLump.getName(), newLump);
         this.mLumpCount += 1;
@@ -390,6 +417,7 @@ public final class WAD {
 
             Lump lump = new Lump(name, size, offset);
             lump.readData(file);
+            lump.setWAD(this);
 
             this.mLumps.add(name, lump);
         }
@@ -419,5 +447,12 @@ public final class WAD {
      */
     public OrderedAA!(string,Lump) getLumps() {
         return this.mLumps;
+    }
+
+    /**
+     * Returns: The filename of this WAD, if any.
+     */
+    public string getFileName() {
+        return this.mFileName;
     }
 }

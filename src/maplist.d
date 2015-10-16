@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2014, Dennis Meuwissen
+    Copyright (c) 2015, Dennis Meuwissen
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -31,9 +31,11 @@ import wad;
 import console;
 import orderedaa;
 import util;
+import duplicatelist;
 
 
-/// A list of lump names that are known to be part of maps.
+/// A list of lump names that are known to be part of Doom or Hexen style maps.
+/// UDMF maps have special handling.
 private string[] MAP_LUMPS = [
     "THINGS",
     "VERTEXES",
@@ -98,9 +100,11 @@ public final class MapList {
      * Params:
      * wad = The WAD file to add map markers from.
      */
-    public void readFrom(WAD wad) {
+    public DuplicateList readFrom(WAD wad) {
         MapMarker* marker;
         string lumpName;
+        
+        DuplicateList dupes = new DuplicateList();
 
         OrderedAA!(string,Lump) lumps = wad.getLumps();
         foreach (int index, ref Lump lump; lumps) {
@@ -130,7 +134,7 @@ public final class MapList {
                 if (marker.type == MapType.UDMF) {
                     if (lumpName == "ENDMAP") {
                         marker.lumpIndexEnd = index + 1;
-                        addMarker(*marker);
+                        dupes.add(addMarker(*marker));
                         marker = null;
                     }
                     lump.setIsUsed(true);
@@ -144,13 +148,13 @@ public final class MapList {
                     // End this map if it is a not a known map lump.
                     if (isMapLump(lumpName) == false) {
                         marker.lumpIndexEnd = index;
-                        addMarker(*marker);
+                        dupes.add(addMarker(*marker));
                         marker = null;
 
                     // End this map if this lump is the last in the WAD.
                     } else if (index == lumps.length - 1) {
                         marker.lumpIndexEnd = index + 1;
-                        addMarker(*marker);
+                        dupes.add(addMarker(*marker));
                         marker = null;
                         lump.setIsUsed(true);
 
@@ -161,6 +165,8 @@ public final class MapList {
                 }
             }
         }
+
+        return dupes;
     }
 
     /**
@@ -188,12 +194,18 @@ public final class MapList {
         this.mMapMarkers.sort();
     }
 
-    private void addMarker(MapMarker marker) {
+    private DuplicateList addMarker(MapMarker marker) {
+        DuplicateList dupes = new DuplicateList();
+
         if (this.mMapMarkers.contains(marker.name)) {
             console.writeLine(Color.IMPORTANT, "Overwriting map %s.", marker.name);
-        }
 
+            MapMarker dupMarker = this.mMapMarkers[marker.name];
+            dupes.add("map", dupMarker.wad, dupMarker.name, marker.wad, marker.name, false);
+        }
         this.mMapMarkers.update(marker.name, marker);
+
+        return dupes;
     }
 
     private bool isMapLump(const string lumpName) {
