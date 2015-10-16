@@ -64,14 +64,14 @@ private struct Duplicate {
      * Returns: The full name of the WAD and entry of duplicate entry A.
      */
     public string getNameA() {
-         return format("%s:%s", stripExtension(baseName(wadA.getFileName())), nameA);
+         return format("%s:%s", baseName(wadA.getFileName()), nameA);
     }
 
     /**
      * Returns: The full name of the WAD and entry of duplicate entry B.
      */
     public string getNameB() {
-         return format("%s:%s", stripExtension(baseName(wadB.getFileName())), nameB);
+         return format("%s:%s", baseName(wadB.getFileName()), nameB);
     }
 }
 
