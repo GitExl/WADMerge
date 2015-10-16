@@ -48,7 +48,7 @@ private immutable string NAME = "WADMerge";
 /// Program version information.
 private immutable ubyte VERSION_MAJOR = 2;
 private immutable ubyte VERSION_MINOR = 3;
-private immutable ubyte VERSION_PATCH = 0;
+private immutable ubyte VERSION_PATCH = 1;
 
 /// If true, this program is marked as a beta version.
 private immutable bool VERSION_BETA = true;
