@@ -10,7 +10,7 @@
 <dd>A text list contains all text lumps found in a WAD file. It concatenates existing ones when they are added.
  No regard is taken for text file encoding, they are simply treated as arrays of bytes.<br><br>
 
-<dl><dt><big><a name="TextList.readFrom"></a>void <u>readFrom</u>(WAD <i>wad</i>);
+<dl><dt><big><a name="TextList.readFrom"></a>DuplicateList <u>readFrom</u>(WAD <i>wad</i>);
 </big></dt>
 <dd>Adds text lumps found in a WAD file to this list. If a text lump already exists, it will be
  extended with the text of the new lump.

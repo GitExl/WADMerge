@@ -30,7 +30,12 @@ SS, FF, or PP.<br><br>
 A namespace is marked by a start lump, such as SS_START and an end lump like S_END. All
  lumps inbetween these two markers will in this example become part of the namespace called "SS".<br><br>
 
-<dl><dt><big><a name="NamespaceList.readFrom"></a>void <u>readFrom</u>(WAD <i>wad</i>);
+<dl><dt><big><a name="NamespaceList.mNamespaceNames"></a>static string[string] <u>mNamespaceNames</u>;
+</big></dt>
+<dd>These map short namespace names like SS and TX to readable names.<br><br>
+
+</dd>
+<dt><big><a name="NamespaceList.readFrom"></a>DuplicateList <u>readFrom</u>(WAD <i>wad</i>);
 </big></dt>
 <dd>Adds namespaces and their lumps from a WAD's contents.
 <br><br>
@@ -75,6 +80,12 @@ A namespace is marked by a start lump, such as SS_START and an end lump like S_E
 </big></dt>
 <dd><b>Returns:</b><br>
 The namespaces that are contained in this list.<br><br>
+
+</dd>
+<dt><big><a name="NamespaceList.getFullName"></a>string <u>getFullName</u>(string <i>name</i>);
+</big></dt>
+<dd><b>Returns:</b><br>
+a readable <i>name</i> for a short namespace <i>name</i>,<br><br>
 
 </dd>
 </dl>

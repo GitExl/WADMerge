@@ -26,7 +26,7 @@
 </table><br>
 
 </dd>
-<dt><big><a name="Lump.this"></a>this(string <i>name</i>, ubyte[] <i>data</i>);
+<dt><big><a name="Lump.this.2"></a>this(string <i>name</i>, ubyte[] <i>data</i>);
 </big></dt>
 <dd>Constructor for a lump with predetermined <i>data</i>.
 <br><br>
@@ -38,7 +38,7 @@
 </table><br>
 
 </dd>
-<dt><big><a name="Lump.this"></a>this(string <i>name</i>, const int <i>size</i>, const int <i>offset</i>);
+<dt><big><a name="Lump.this.3"></a>this(string <i>name</i>, const int <i>size</i>, const int <i>offset</i>);
 </big></dt>
 <dd>Constructor for a lump whose data will be read at a later point.
 <br><br>
@@ -142,6 +142,17 @@ This lump's byte offset.<br><br>
 A new MemoryStream object that points to this lump's raw data.<br><br>
 
 </dd>
+<dt><big><a name="Lump.getWAD"></a>WAD <u>getWAD</u>();
+</big></dt>
+<dd><b>Returns:</b><br>
+The WAD this lump is in, if any.<br><br>
+
+</dd>
+<dt><big><a name="Lump.setWAD"></a>void <u>setWAD</u>(WAD <i>wad</i>);
+</big></dt>
+<dd>Sets the WAD this lump is in.<br><br>
+
+</dd>
 </dl>
 </dd>
 <dt><big><a name="WAD"></a>class <u>WAD</u>;
@@ -161,7 +172,7 @@ See <a href="http://doomwiki.org/wiki/WAD">The Doom Wiki</a> for more informatio
 </table><br>
 
 </dd>
-<dt><big><a name="WAD.this"></a>this(const string <i>fileName</i>);
+<dt><big><a name="WAD.this.2"></a>this(const string <i>fileName</i>);
 </big></dt>
 <dd>Constructor for reading a WAD file from storage.
 <br><br>
@@ -205,7 +216,7 @@ See <a href="http://doomwiki.org/wiki/WAD">The Doom Wiki</a> for more informatio
 A new Lump object copy.<br><br>
 
 </dd>
-<dt><big><a name="WAD.addLump"></a>Lump <u>addLump</u>(const string <i>name</i>);
+<dt><big><a name="WAD.addLump.2"></a>Lump <u>addLump</u>(const string <i>name</i>);
 </big></dt>
 <dd>Adds an empty lump to this WAD file.
 <br><br>
@@ -223,7 +234,7 @@ The new Lump object that was added.<br><br>
 A lump from this WAD by it's <i>index</i>.<br><br>
 
 </dd>
-<dt><big><a name="WAD.getLump"></a>Lump <u>getLump</u>(const string <i>name</i>);
+<dt><big><a name="WAD.getLump.2"></a>Lump <u>getLump</u>(const string <i>name</i>);
 </big></dt>
 <dd><b>Returns:</b><br>
 A lump from this WAD by it's <i>name</i>. The last occurrence of the lump's <i>name</i> will be used
@@ -234,6 +245,12 @@ A lump from this WAD by it's <i>name</i>. The last occurrence of the lump's <i>n
 </big></dt>
 <dd><b>Returns:</b><br>
 The lumps contained in this WAD.<br><br>
+
+</dd>
+<dt><big><a name="WAD.getFileName"></a>string <u>getFileName</u>();
+</big></dt>
+<dd><b>Returns:</b><br>
+The filename of this WAD, if any.<br><br>
 
 </dd>
 </dl>
