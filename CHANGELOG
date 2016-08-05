@@ -1,3 +1,7 @@
+Version 2.3.1
+-------------
+- Initial non-beta release.
+
 Version 2.3.0 beta
 ------------------
 - Added: ability to output overwritten and merged lump names to a text file using the --duplicates parameter.
