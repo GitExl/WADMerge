@@ -25,10 +25,11 @@
 
 module util;
 
-import std.stream;
 import std.file;
 import std.string;
 import std.encoding;
+
+import undead.stream;
 
 
 /**

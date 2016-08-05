@@ -27,7 +27,7 @@ import std.stdio;
 import std.file;
 import std.string;
 import std.algorithm;
-import std.c.stdlib;
+import core.stdc.stdlib;
 
 import wad;
 import console;
@@ -51,7 +51,7 @@ private immutable ubyte VERSION_MINOR = 3;
 private immutable ubyte VERSION_PATCH = 1;
 
 /// If true, this program is marked as a beta version.
-private immutable bool VERSION_BETA = true;
+private immutable bool VERSION_BETA = false;
 
 
 /**

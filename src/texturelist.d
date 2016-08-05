@@ -25,8 +25,9 @@
 
 module texturelist;
 
-import std.stream;
 import std.string;
+
+import undead.stream;
 
 import wad;
 import util;

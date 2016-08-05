@@ -26,8 +26,9 @@
 module wad;
 
 import std.string;
-import std.stream;
 import std.stdio;
+
+import undead.stream;
 
 import orderedaa;
 import util;

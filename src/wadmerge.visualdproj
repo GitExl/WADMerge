@@ -307,6 +307,11 @@
   <filesToClean>*.obj;*.cmd;*.build;*.json;*.dep</filesToClean>
  </Config>
  <Folder name="wadmerge">
+  <Folder name="undead">
+   <File path="doformat.d" />
+   <File path="file.d" />
+   <File path="stream.d" />
+  </Folder>
   <File path="animatedlist.d" />
   <File path="console.d" />
   <File path="duplicatelist.d" />

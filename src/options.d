@@ -27,7 +27,7 @@ module options;
 
 import std.stdio;
 import std.getopt;
-import std.c.stdlib;
+import core.stdc.stdlib;
 
 import license;
 import help;
